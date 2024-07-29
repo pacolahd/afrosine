@@ -1,6 +1,6 @@
 # afrosine
 
-A new Flutter project.
+Application software that generates and customizes traditional African recipes based on user-provided inputs such as location, available ingredients, and dietary preferences
 
 ## Getting Started
 
