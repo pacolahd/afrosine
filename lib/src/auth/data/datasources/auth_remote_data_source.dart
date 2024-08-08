@@ -216,14 +216,46 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   Future<void> _setUserData(User user, String fallbackEmail) async {
-    await _cloudStoreClient.collection('users').doc(user.uid).set(
+    final userRef = _cloudStoreClient.collection('users').doc(user.uid);
+
+    await _cloudStoreClient.runTransaction((transaction) async {
+      final userDoc = await transaction.get(userRef);
+
+      if (userDoc.exists) {
+        // If the user document already exists, we only update the fields that might have changed
+        final existingData = userDoc.data()!;
+        transaction.update(userRef, {
+          'email': user.email ?? fallbackEmail,
+          'userName': user.displayName ?? existingData['userName'] ?? '',
+          // We keep the existing favoriteRecipeIds if they exist
+          'favoriteRecipeIds': existingData['favoriteRecipeIds'] ?? [],
+        });
+      } else {
+        // If the user document doesn't exist, we create it with default values
+        transaction.set(
+          userRef,
           LocalUserModel(
             uid: user.uid,
             email: user.email ?? fallbackEmail,
             userName: user.displayName ?? '',
+            favoriteRecipeIds: [],
           ).toMap(),
         );
+      }
+    });
   }
+
+  // Future<void> _setUserData(User user, String fallbackEmail) async {
+  //   await _cloudStoreClient.collection('users').doc(user.uid).set(
+  //          TODO : Make sure the favourites are correctly handled so as not to replace the existing data with empty list.
+  //         LocalUserModel(
+  //           uid: user.uid,
+  //           email: user.email ?? fallbackEmail,
+  //           userName: user.displayName ?? '',
+  //           favoriteRecipeIds: [],
+  //         ).toMap(),
+  //       );
+  // }
 
   Future<void> _updateUserData(DataMap data) async {
     await _cloudStoreClient

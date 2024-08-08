@@ -8,6 +8,7 @@ import 'package:afrosine/src/auth/presentation/views/get_started_screen.dart';
 import 'package:afrosine/src/auth/presentation/views/sign_in_screen.dart';
 import 'package:afrosine/src/auth/presentation/views/sign_up_screen.dart';
 import 'package:afrosine/src/dashboard/views/custom_bottom_nav_bar.dart';
+import 'package:afrosine/src/home/presentation/views/home_screen.dart';
 import 'package:afrosine/src/on_boarding/data/datasources/on_boarding_local_data_source.dart';
 import 'package:afrosine/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:afrosine/src/on_boarding/presentation/views/on_boarding_screen.dart';
@@ -53,6 +54,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               uid: user!.uid,
               email: user.email ?? '',
               userName: user.displayName ?? '',
+              // TODO : Make sure the favourites are correctly handled
+
+              favoriteRecipeIds: [],
             );
             context.userProvider.initUser(localUser);
             debugPrint('User: ${context.userProvider.user}');
@@ -100,6 +104,16 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case GetStartedScreen.routeName:
       return _pageBuilder(
         (_) => const GetStartedScreen(),
+        settings: settings,
+      );
+    case CustomBottomNavBar.routeName:
+      return _pageBuilder(
+        (_) => const CustomBottomNavBar(),
+        settings: settings,
+      );
+    case HomeScreen.routeName:
+      return _pageBuilder(
+        (_) => HomeScreen(),
         settings: settings,
       );
 

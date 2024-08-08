@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Afrosine',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,

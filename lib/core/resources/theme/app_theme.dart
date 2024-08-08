@@ -39,6 +39,7 @@ class AppTheme {
       ),
       unselectedLabelStyle: baseTextStyles.caption.copyWith(
         color: AppColors.dark,
+        fontSize: 11,
       ),
     ),
   );
@@ -96,8 +97,7 @@ class AppTheme {
       ),
     ],
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor:
-          const Color(0xFF1E1E1E), // Slightly lighter than background
+      backgroundColor: AppColors.dark, // Slightly lighter than background
       selectedItemColor: AppColors.orange,
       unselectedItemColor:
           const Color(0xFFB0B0B0), // Dimmer color for unselected items
@@ -105,7 +105,8 @@ class AppTheme {
         color: AppColors.orange,
       ),
       unselectedLabelStyle: baseTextStyles.caption.copyWith(
-        color: const Color(0xFFB0B0B0),
+        color: AppColors.dark,
+        fontSize: 11,
       ),
     ),
   );

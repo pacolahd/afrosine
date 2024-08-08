@@ -116,8 +116,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                     .copyWith(
                                         color: context.theme.colors.milkyWhite),
                               ),
-                              icon: const Icon(Icons.arrow_forward,
-                                  color: Colors.white),
+                              icon: const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                              ),
                               iconAlignment: IconAlignment.end,
                               onPressed: () {
                                 FocusManager.instance.primaryFocus?.unfocus();

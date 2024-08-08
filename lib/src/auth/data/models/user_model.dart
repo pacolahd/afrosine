@@ -13,6 +13,7 @@ class LocalUserModel extends LocalUser {
     required super.uid,
     required super.email,
     required super.userName,
+    required super.favoriteRecipeIds,
   });
 
   const LocalUserModel.empty()
@@ -20,6 +21,7 @@ class LocalUserModel extends LocalUser {
           uid: '',
           email: '',
           userName: '',
+          favoriteRecipeIds: const [],
         );
 
   LocalUserModel.fromMap(DataMap map)
@@ -27,6 +29,9 @@ class LocalUserModel extends LocalUser {
           uid: map['uid'] as String,
           userName: map['userName'] as String,
           email: map['email'] as String,
+          favoriteRecipeIds: List<String>.from(
+            map['favoriteRecipeIds'] as List<dynamic>? ?? [],
+          ),
 
           // When we convert something from Json to int/double, it may not work as expected especially if the value is from json.
           // So when working with numbers from database, we don't want to directly convert them to the type
@@ -49,11 +54,13 @@ class LocalUserModel extends LocalUser {
     String? uid,
     String? email,
     String? userName,
+    List<String>? favoriteRecipeIds,
   }) {
     return LocalUserModel(
       uid: uid ?? this.uid,
       email: email ?? this.email,
       userName: userName ?? this.userName,
+      favoriteRecipeIds: favoriteRecipeIds ?? this.favoriteRecipeIds,
     );
   }
 
@@ -65,6 +72,7 @@ class LocalUserModel extends LocalUser {
       'uid': uid,
       'email': email,
       'userName': userName,
+      'favoriteRecipeIds': favoriteRecipeIds,
     };
   }
 

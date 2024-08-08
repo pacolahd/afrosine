@@ -30,6 +30,13 @@ class UserProvider extends ChangeNotifier {
       // notifyListeners();
     }
   }
+
+  void updateFavorites(List<String> favoriteIds) {
+    if (_user != null) {
+      _user = _user!.copyWith(favoriteRecipeIds: favoriteIds);
+      notifyListeners();
+    }
+  }
   // we will call this as userProvider.user = user;
 
   // can also do void setUser(LocalUserModel user) {

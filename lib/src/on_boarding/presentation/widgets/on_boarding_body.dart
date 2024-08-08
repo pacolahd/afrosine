@@ -86,7 +86,9 @@ class OnBoardingBody extends StatelessWidget {
                 onPressed: () {
                   context.read<OnBoardingCubit>().cacheFirstTimer();
                   Navigator.pushReplacementNamed(
-                      context, SignInScreen.routeName);
+                    context,
+                    SignInScreen.routeName,
+                  );
                 },
                 child: const Text(
                   'Get Started',
