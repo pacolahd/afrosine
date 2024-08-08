@@ -11,6 +11,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   await _initOnBoarding();
   await _initAuth();
+  await _initRecipe();
 }
 
 Future<void> _initAuth() async {
@@ -41,6 +42,75 @@ Future<void> _initAuth() async {
     ..registerLazySingleton(() => FirebaseAuth.instance)
     ..registerLazySingleton(() => FirebaseFirestore.instance)
     ..registerLazySingleton(() => FirebaseStorage.instance);
+}
+
+Future<void> _initRecipe() async {
+  // Feature --> Recipe
+  // Business Logic
+
+  // Initialize SQLite database
+  final database = await openDatabase(
+    join(await getDatabasesPath(), 'recipe_database.db'),
+    onCreate: (db, version) {
+      return db.execute(
+        '''
+        CREATE TABLE recipes(
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          description TEXT,
+          imageUrl TEXT,
+          ingredients TEXT,
+          instructions TEXT,
+          cuisine TEXT,
+          dishType TEXT,
+          preparationMethod TEXT,
+          spiceLevel TEXT,
+          servingSize TEXT,
+          mealTypes TEXT,
+          rating REAL,
+          ratingCount INTEGER,
+          feedback TEXT,
+          isFavorite INTEGER
+        )
+        ''',
+      );
+    },
+    version: 1,
+  );
+
+  sl
+    ..registerFactory(() => RecipeBloc(
+          getRecipes: sl(),
+          getRecipeById: sl(),
+          toggleFavoriteRecipe: sl(),
+          getFavoriteRecipeIds: sl(),
+          addFeedback: sl(),
+          getRecipeFeedback: sl(),
+          searchRecipes: sl(),
+          filterRecipes: sl(),
+        ))
+    ..registerLazySingleton(() => GetRecipes(sl()))
+    ..registerLazySingleton(() => GetRecipeById(sl()))
+    ..registerLazySingleton(() => ToggleFavoriteRecipe(sl()))
+    ..registerLazySingleton(() => GetFavoriteRecipeIds(sl()))
+    ..registerLazySingleton(() => AddFeedback(sl()))
+    ..registerLazySingleton(() => GetRecipeFeedback(sl()))
+    ..registerLazySingleton(() => SearchRecipes(sl()))
+    ..registerLazySingleton(() => FilterRecipes(sl()))
+    ..registerLazySingleton<RecipeRepository>(() => RecipeRepoImpl(sl(), sl()))
+    ..registerLazySingleton<RecipeRemoteDataSource>(
+      () => RecipeRemoteDataSourceImpl(
+        authClient: sl(),
+        cloudStoreClient: sl(),
+        dbClient: sl(),
+      ),
+    )
+    ..registerLazySingleton<RecipeLocalDataSource>(
+      () => RecipeLocalDataSourceImpl(
+        database: database,
+      ),
+    )
+    ..registerLazySingleton<Database>(() => database);
 }
 
 Future<void> _initOnBoarding() async {

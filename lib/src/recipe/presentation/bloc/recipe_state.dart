@@ -67,3 +67,19 @@ class RecipeFeedbackLoaded extends RecipeState {
   @override
   List<Object> get props => [feedback];
 }
+
+class RecipesSearched extends RecipeState {
+  const RecipesSearched({required this.recipes});
+  final List<Recipe> recipes;
+
+  @override
+  List<Object> get props => [recipes];
+}
+
+class RecipesFiltered extends RecipeState {
+  const RecipesFiltered({required this.recipes});
+  final List<Recipe> recipes;
+
+  @override
+  List<Object> get props => [recipes];
+}

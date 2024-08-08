@@ -9,9 +9,11 @@ import 'package:afrosine/src/auth/presentation/views/sign_in_screen.dart';
 import 'package:afrosine/src/auth/presentation/views/sign_up_screen.dart';
 import 'package:afrosine/src/dashboard/views/custom_bottom_nav_bar.dart';
 import 'package:afrosine/src/home/presentation/views/home_screen.dart';
+import 'package:afrosine/src/home/presentation/views/recipe_search_screen.dart';
 import 'package:afrosine/src/on_boarding/data/datasources/on_boarding_local_data_source.dart';
 import 'package:afrosine/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:afrosine/src/on_boarding/presentation/views/on_boarding_screen.dart';
+import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fui;
 import 'package:flutter/material.dart';
@@ -113,7 +115,24 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
     case HomeScreen.routeName:
       return _pageBuilder(
-        (_) => HomeScreen(),
+        (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<RecipeBloc>()),
+          ],
+          child: HomeScreen(),
+        ),
+        settings: settings,
+      );
+    case RecipeSearchScreen.routeName:
+      return _pageBuilder(
+        (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<RecipeBloc>()),
+          ],
+          child: const RecipeSearchScreen(),
+        ),
         settings: settings,
       );
 

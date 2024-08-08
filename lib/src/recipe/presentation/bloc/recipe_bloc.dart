@@ -15,12 +15,16 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     required GetFavoriteRecipeIds getFavoriteRecipeIds,
     required AddFeedback addFeedback,
     required GetRecipeFeedback getRecipeFeedback,
+    required SearchRecipes searchRecipes,
+    required FilterRecipes filterRecipes,
   })  : _getRecipes = getRecipes,
         _getRecipeById = getRecipeById,
         _toggleFavoriteRecipe = toggleFavoriteRecipe,
         _getFavoriteRecipeIds = getFavoriteRecipeIds,
         _addFeedback = addFeedback,
         _getRecipeFeedback = getRecipeFeedback,
+        _searchRecipes = searchRecipes,
+        _filterRecipes = filterRecipes,
         super(const RecipeInitial()) {
     on<RecipeEvent>((event, emit) {
       emit(const RecipeLoading());
@@ -31,6 +35,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<GetFavoriteRecipeIdsEvent>(_getFavoriteRecipeIdsHandler);
     on<AddFeedbackEvent>(_addFeedbackHandler);
     on<GetRecipeFeedbackEvent>(_getRecipeFeedbackHandler);
+    on<SearchRecipesEvent>(_searchRecipesHandler);
+    on<FilterRecipesEvent>(_filterRecipesHandler);
   }
 
   final GetRecipes _getRecipes;
@@ -39,6 +45,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final GetFavoriteRecipeIds _getFavoriteRecipeIds;
   final AddFeedback _addFeedback;
   final GetRecipeFeedback _getRecipeFeedback;
+  final SearchRecipes _searchRecipes;
+  final FilterRecipes _filterRecipes;
 
   Future<void> _getRecipesHandler(
     GetRecipesEvent event,
@@ -108,6 +116,29 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     result.fold(
       (failure) => emit(RecipeError(message: failure.message)),
       (feedback) => emit(RecipeFeedbackLoaded(feedback: feedback)),
+    );
+  }
+
+  Future<void> _searchRecipesHandler(
+    SearchRecipesEvent event,
+    Emitter<RecipeState> emit,
+  ) async {
+    final result = await _searchRecipes(event.query);
+    result.fold(
+      (failure) => emit(RecipeError(message: failure.message)),
+      (recipes) => emit(RecipesSearched(recipes: recipes)),
+    );
+  }
+
+  Future<void> _filterRecipesHandler(
+    FilterRecipesEvent event,
+    Emitter<RecipeState> emit,
+  ) async {
+    emit(RecipeLoading());
+    final result = await _filterRecipes(event.params);
+    result.fold(
+      (failure) => emit(RecipeError(message: failure.message)),
+      (recipes) => emit(RecipesFiltered(recipes: recipes)),
     );
   }
 }

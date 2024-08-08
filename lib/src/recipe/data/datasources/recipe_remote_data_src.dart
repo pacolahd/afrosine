@@ -1,4 +1,5 @@
 import 'package:afrosine/core/errors/exceptions.dart';
+import 'package:afrosine/core/utils/constants.dart';
 import 'package:afrosine/src/recipe/data/models/feedback_model.dart';
 import 'package:afrosine/src/recipe/data/models/recipe_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,14 +31,28 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   final FirebaseFirestore _cloudStoreClient;
   final FirebaseStorage _dbClient;
 
+  // @override
+  // Future<List<RecipeModel>> getRecipes() async {
+  //   try {
+  //     final recipeSnapshots =
+  //         await _cloudStoreClient.collection('recipes').get();
+  //     return recipeSnapshots.docs
+  //         .map((doc) => RecipeModel.fromMap(doc.data()))
+  //         .toList();
+  //   } catch (e, s) {
+  //     debugPrintStack(stackTrace: s);
+  //     throw ServerException(
+  //       message: e.toString(),
+  //       statusCode: '500',
+  //     );
+  //   }
+  // }
+
   @override
-  Future<List<RecipeModel>> getRecipes() async {
+  Future<List<RecipeModel>> getRecipes() {
     try {
-      final recipeSnapshots =
-          await _cloudStoreClient.collection('recipes').get();
-      return recipeSnapshots.docs
-          .map((doc) => RecipeModel.fromMap(doc.data()))
-          .toList();
+      // Return a hardcoded list of RecipeModel instances
+      return Future.value(dummyRecipes());
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       throw ServerException(

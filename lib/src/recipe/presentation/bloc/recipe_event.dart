@@ -59,3 +59,19 @@ class GetRecipeFeedbackEvent extends RecipeEvent {
   @override
   List<Object> get props => [recipeId];
 }
+
+class SearchRecipesEvent extends RecipeEvent {
+  const SearchRecipesEvent(this.query);
+  final String query;
+
+  @override
+  List<Object> get props => [query];
+}
+
+class FilterRecipesEvent extends RecipeEvent {
+  const FilterRecipesEvent(this.params);
+  final FilterParams params;
+
+  @override
+  List<Object> get props => [params];
+}

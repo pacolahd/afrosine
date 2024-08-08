@@ -1,661 +1,174 @@
+import 'package:afrosine/core/extensions/context_extension.dart';
 import 'package:afrosine/core/resources/media_resources.dart';
 import 'package:afrosine/core/resources/theme/app_colors.dart';
-import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
+import 'package:afrosine/src/home/presentation/views/recipe_filter_screen.dart';
+import 'package:afrosine/src/home/presentation/views/recipe_search_screen.dart';
+import 'package:afrosine/src/home/presentation/widgets/recipe_card.dart';
+import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
+import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          AppColors.milkyWhite, // pageBackground = Color(0xFFF5F5DC)
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage(MediaRes.defaultUser),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Hi, Afrosine',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Explore the Taste of Africa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                'Discover vibrant and delicious African recipes, from savory stews to sweet treats. Start cooking today!',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search),
-                        hintText: 'Search...',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.filter_list, color: Colors.white),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildCategoryButton(context, 'Breakfast'),
-                  _buildCategoryButton(context, 'Lunch'),
-                  _buildCategoryButton(context, 'Dinner'),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Find your meals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: GridView.builder(
-                  itemCount: 6,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemBuilder: (context, index) {
-                    return _buildRecipeCard(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton(BuildContext context, String label) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            switch (label) {
-              case 'Breakfast':
-                return BreakfastScreen();
-              case 'Lunch':
-                return LunchScreen();
-              case 'Dinner':
-                return DinnerScreen();
-              default:
-                return HomeScreen();
-            }
-          }),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(label),
-    );
-  }
-
-  Widget _buildRecipeCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RecipeDetailScreen()),
-        );
-      },
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Image.asset(
-                'assets/images/recipe.jpeg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Egusi soup', style: TextStyle(fontSize: 14)),
-                  Icon(Icons.add_circle_outline, color: AppColors.orange),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class BreakfastScreen extends StatelessWidget {
+class _HomeScreenState extends State<HomeScreen> {
+  String selectedMealType = 'Lunch';
+  @override
+  void initState() {
+    super.initState();
+    context.read<RecipeBloc>().add(const GetRecipesEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          AppColors.milkyWhite, // pageBackground = Color(0xFFF5F5DC)
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('assets/images/profile.jpeg'),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Hi, Afrosine',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Explore the Taste of Africa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'Discover vibrant and delicious African recipes, from savory stews to sweet treats. Start cooking today!',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search...',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(Icons.filter_list, color: Colors.white),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildCategoryButton(context, 'Breakfast'),
-                  _buildCategoryButton(context, 'Lunch'),
-                  _buildCategoryButton(context, 'Dinner'),
-                ],
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Breakfast meals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: GridView.builder(
-                  itemCount: 6,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemBuilder: (context, index) {
-                    return _buildRecipeCard(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton(BuildContext context, String label) {
-    Color buttonColor =
-        label == 'Breakfast' ? Color(0xFFF8BD00) : Colors.orange;
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            switch (label) {
-              case 'Breakfast':
-                return BreakfastScreen();
-              case 'Lunch':
-                return LunchScreen();
-              case 'Dinner':
-                return DinnerScreen();
-              default:
-                return HomeScreen();
-            }
-          }),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(label),
-    );
-  }
-
-  Widget _buildRecipeCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RecipeDetailScreen()),
-        );
-      },
-      child: Card(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: Image.asset(
-                'assets/images/recipe.jpeg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Egusi soup', style: TextStyle(fontSize: 14)),
-                  Icon(Icons.add_circle_outline, color: Colors.orange),
-                ],
-              ),
-            ),
+            _buildHeader(),
+            _buildSearchBar(),
+            _buildMealTypeButtons(),
+            Expanded(child: _buildRecipeGrid()),
           ],
         ),
       ),
     );
   }
-}
 
-class LunchScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          AppColors.milkyWhite, // pageBackground = Color(0xFFF5F5DC)
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: Colors.transparent,
+            backgroundImage: AssetImage(MediaRes.defaultUser),
+          ),
+          const SizedBox(width: 16),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('assets/images/profile.jpeg'),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Hi, Afrosine',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              Text(
+                // context.watch<UserProvider>().user!.userName,
+                context.userProvider.user!.userName,
+                style: context.theme.textStyles.h3Bold,
               ),
-              SizedBox(height: 10),
               Text(
                 'Explore the Taste of Africa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'Discover vibrant and delicious African recipes, from savory stews to sweet treats. Start cooking today!',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search...',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(Icons.filter_list, color: Colors.white),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildCategoryButton(context, 'Breakfast'),
-                  _buildCategoryButton(context, 'Lunch'),
-                  _buildCategoryButton(context, 'Dinner'),
-                ],
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Lunch meals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: GridView.builder(
-                  itemCount: 6,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemBuilder: (context, index) {
-                    return _buildRecipeCard(context);
-                  },
-                ),
+                style: context.theme.textStyles.body,
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(BuildContext context, String label) {
-    Color buttonColor = label == 'Lunch' ? Color(0xFFF8BD00) : Colors.orange;
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            switch (label) {
-              case 'Breakfast':
-                return BreakfastScreen();
-              case 'Lunch':
-                return LunchScreen();
-              case 'Dinner':
-                return DinnerScreen();
-              default:
-                return HomeScreen();
-            }
-          }),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(label),
-    );
-  }
-
-  Widget _buildRecipeCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RecipeDetailScreen()),
-        );
-      },
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Image.asset(
-                'assets/images/recipe.jpeg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Egusi soup', style: TextStyle(fontSize: 14)),
-                  Icon(Icons.add_circle_outline, color: Colors.orange),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class DinnerScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          AppColors.milkyWhite, // pageBackground = Color(0xFFF5F5DC)
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('assets/images/profile.jpeg'),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Hi, Afrosine',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Explore the Taste of Africa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'Discover vibrant and delicious African recipes, from savory stews to sweet treats. Start cooking today!',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search...',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(Icons.filter_list, color: Colors.white),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildCategoryButton(context, 'Breakfast'),
-                  _buildCategoryButton(context, 'Lunch'),
-                  _buildCategoryButton(context, 'Dinner'),
-                ],
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Dinner meals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: GridView.builder(
-                  itemCount: 6,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 2,
-                  ),
-                  itemBuilder: (context, index) {
-                    return _buildRecipeCard(context);
-                  },
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, RecipeSearchScreen.routeName);
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.search, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Search...', style: TextStyle(color: Colors.grey)),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: AppColors.milkyWhite,
+                showDragHandle: true,
+                elevation: 0,
+                useSafeArea: true,
+                builder: (context) => FilterScreen(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(BuildContext context, String label) {
-    Color buttonColor = label == 'Dinner' ? Color(0xFFF8BD00) : Colors.orange;
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            switch (label) {
-              case 'Breakfast':
-                return BreakfastScreen();
-              case 'Lunch':
-                return LunchScreen();
-              case 'Dinner':
-                return DinnerScreen();
-              default:
-                return HomeScreen();
-            }
-          }),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+  Widget _buildMealTypeButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: ['Breakfast', 'Lunch', 'Dinner'].map((type) {
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: selectedMealType == type
+                  ? AppColors.dark
+                  : context.theme.colors.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                selectedMealType = type;
+              });
+              context
+                  .read<RecipeBloc>()
+                  .add(FilterRecipesEvent(FilterParams(mealTypes: [type])));
+            },
+            child: Text(type,
+                style: context.theme.textStyles.caption.copyWith(
+                  color: AppColors.white,
+                )),
+          );
+        }).toList(),
       ),
-      child: Text(label),
     );
   }
 
-  Widget _buildRecipeCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RecipeDetailScreen()),
-        );
+  Widget _buildRecipeGrid() {
+    return BlocBuilder<RecipeBloc, RecipeState>(
+      builder: (context, state) {
+        if (state is RecipesLoaded) {
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: state.recipes.length,
+            itemBuilder: (context, index) {
+              return RecipeCard(recipe: state.recipes[index]);
+            },
+          );
+        } else if (state is RecipeError) {
+          return Center(child: Text(state.message));
+        }
+        return const Center(child: CircularProgressIndicator());
       },
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Image.asset(
-                'assets/images/recipe.jpeg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Egusi soup', style: TextStyle(fontSize: 14)),
-                  Icon(Icons.add_circle_outline, color: Colors.orange),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

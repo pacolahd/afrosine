@@ -5,6 +5,7 @@ import 'package:afrosine/core/extensions/context_extension.dart';
 import 'package:afrosine/core/services/injection_container.dart';
 import 'package:afrosine/src/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afrosine/src/home/presentation/views/home_screen.dart';
+import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,25 +30,24 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     ]);
   }
 
-  final List<String> _appSectionNames = [
-    'Home',
-    'Sermons',
-    'Events',
-    'Profile',
-  ];
-
   late final List<Widget> _appSections = [
     // Home
 
-    HomeScreen(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<AuthBloc>()),
+        BlocProvider(create: (_) => sl<RecipeBloc>()),
+      ],
+      child: HomeScreen(),
+    ),
 
     // Sermons
     const Center(
-      child: Text('Home 2'),
+      child: Text('Recipe Finder'),
     ),
     // Events
     const Center(
-      child: Text('Home 4'),
+      child: Text('Favourites'),
     ),
     // Profile
     MultiBlocProvider(

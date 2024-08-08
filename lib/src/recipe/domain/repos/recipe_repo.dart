@@ -1,6 +1,7 @@
 import 'package:afrosine/core/utils/typedefs.dart';
 import 'package:afrosine/src/recipe/domain/entities/feedback.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
+import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
 
 abstract class RecipeRepository {
   ResultFuture<List<Recipe>> getRecipes();
@@ -13,16 +14,18 @@ abstract class RecipeRepository {
 
   ResultFuture<void> addFeedback(Feedback feedback);
   ResultFuture<List<Feedback>> getRecipeFeedback(String recipeId);
+  ResultFuture<List<Recipe>> searchRecipes(String query);
 
+  ResultFuture<List<Recipe>> filterRecipes(FilterParams params);
   // Optional. We will Implement these methods if you want to add search and filter functionality
   // For now, search and filter will be done on the client side (presentation layer)
-  ResultFuture<List<Recipe>> searchRecipes(String query);
-  ResultFuture<List<Recipe>> filterRecipes({
-    List<String>? mealTypes,
-    String? cuisine,
-    String? dishType,
-    String? preparationMethod,
-    String? spiceLevel,
-    String? servingSize,
-  });
+
+  // ResultFuture<List<Recipe>> filterRecipes({
+  //   List<String>? mealTypes,
+  //   String? cuisine,
+  //   String? dishType,
+  //   String? preparationMethod,
+  //   String? spiceLevel,
+  //   String? servingSize,
+  // });
 }
