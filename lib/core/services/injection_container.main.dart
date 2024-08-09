@@ -49,36 +49,40 @@ Future<void> _initRecipe() async {
   // Business Logic
 
   // Initialize SQLite database
-  final database = await openDatabase(
-    join(await getDatabasesPath(), 'recipe_database.db'),
-    onCreate: (db, version) {
-      return db.execute(
-        '''
-        CREATE TABLE recipes(
-          id TEXT PRIMARY KEY,
-          name TEXT,
-          description TEXT,
-          imageUrl TEXT,
-          ingredients TEXT,
-          instructions TEXT,
-          cuisine TEXT,
-          dishType TEXT,
-          preparationMethod TEXT,
-          spiceLevel TEXT,
-          servingSize TEXT,
-          mealTypes TEXT,
-          rating REAL,
-          ratingCount INTEGER,
-          feedback TEXT,
-          isFavorite INTEGER
-        )
-        ''',
-      );
-    },
-    version: 1,
-  );
+  // final database = await openDatabase(
+  //   join(await getDatabasesPath(), 'recipe_database.db'),
+  //   onCreate: (db, version) {
+  //     return db.execute(
+  //       '''
+  //       CREATE TABLE recipes(
+  //         id TEXT PRIMARY KEY,
+  //         name TEXT,
+  //         description TEXT,
+  //         imageUrl TEXT,
+  //         ingredients TEXT,
+  //         instructions TEXT,
+  //         cuisine TEXT,
+  //         dishType TEXT,
+  //         preparationMethod TEXT,
+  //         spiceLevel TEXT,
+  //         servingSize TEXT,
+  //         mealTypes TEXT,
+  //         rating REAL,
+  //         ratingCount INTEGER,
+  //         feedback TEXT,
+  //         isFavorite INTEGER
+  //       )
+  //       ''',
+  //     );
+  //   },
+  //   version: 1,
+  //   readOnly: false,
+  // );
+
+  final databaseHelper = DatabaseHelper();
 
   sl
+    ..registerLazySingleton(() => databaseHelper)
     ..registerFactory(() => RecipeBloc(
           getRecipes: sl(),
           getRecipeById: sl(),
@@ -88,7 +92,9 @@ Future<void> _initRecipe() async {
           getRecipeFeedback: sl(),
           searchRecipes: sl(),
           filterRecipes: sl(),
+          generateRecipe: sl(),
         ))
+    ..registerLazySingleton(() => GenerateRecipe(sl()))
     ..registerLazySingleton(() => GetRecipes(sl()))
     ..registerLazySingleton(() => GetRecipeById(sl()))
     ..registerLazySingleton(() => ToggleFavoriteRecipe(sl()))
@@ -97,20 +103,18 @@ Future<void> _initRecipe() async {
     ..registerLazySingleton(() => GetRecipeFeedback(sl()))
     ..registerLazySingleton(() => SearchRecipes(sl()))
     ..registerLazySingleton(() => FilterRecipes(sl()))
-    ..registerLazySingleton<RecipeRepository>(() => RecipeRepoImpl(sl(), sl()))
+    ..registerLazySingleton<RecipeRepository>(() => RecipeRepoImpl(sl()))
     ..registerLazySingleton<RecipeRemoteDataSource>(
       () => RecipeRemoteDataSourceImpl(
         authClient: sl(),
         cloudStoreClient: sl(),
         dbClient: sl(),
+        geminiAIService: sl(),
       ),
     )
-    ..registerLazySingleton<RecipeLocalDataSource>(
-      () => RecipeLocalDataSourceImpl(
-        database: database,
-      ),
-    )
-    ..registerLazySingleton<Database>(() => database);
+    ..registerLazySingleton(() => GeminiAIService(apiKey: geminiApiKey));
+
+  // ..registerLazySingleton<Database>(() => database);
 }
 
 Future<void> _initOnBoarding() async {

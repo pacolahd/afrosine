@@ -39,7 +39,9 @@ class _FilterScreenState extends State<FilterScreen> {
               TextButton(
                 child: const Text('Reset'),
                 onPressed: () {
-                  setState(_selectedFilters.clear);
+                  setState(() {
+                    _selectedFilters.clear();
+                  });
                 },
               ),
               Text(

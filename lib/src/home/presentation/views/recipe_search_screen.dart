@@ -49,7 +49,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
       ),
       body: BlocBuilder<RecipeBloc, RecipeState>(
         builder: (context, state) {
-          if (state is RecipesSearched) {
+          if (state is RecipesLoaded) {
             return ListView.builder(
               itemCount: state.recipes.length,
               itemBuilder: (context, index) {

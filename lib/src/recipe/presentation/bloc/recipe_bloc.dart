@@ -3,6 +3,7 @@ import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'recipe_event.dart';
 part 'recipe_state.dart';
@@ -17,6 +18,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     required GetRecipeFeedback getRecipeFeedback,
     required SearchRecipes searchRecipes,
     required FilterRecipes filterRecipes,
+    required GenerateRecipe generateRecipe,
   })  : _getRecipes = getRecipes,
         _getRecipeById = getRecipeById,
         _toggleFavoriteRecipe = toggleFavoriteRecipe,
@@ -25,6 +27,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         _getRecipeFeedback = getRecipeFeedback,
         _searchRecipes = searchRecipes,
         _filterRecipes = filterRecipes,
+        _generateRecipe = generateRecipe,
         super(const RecipeInitial()) {
     on<RecipeEvent>((event, emit) {
       emit(const RecipeLoading());
@@ -37,6 +40,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<GetRecipeFeedbackEvent>(_getRecipeFeedbackHandler);
     on<SearchRecipesEvent>(_searchRecipesHandler);
     on<FilterRecipesEvent>(_filterRecipesHandler);
+    on<GenerateRecipeEvent>(_generateRecipeHandler);
   }
 
   final GetRecipes _getRecipes;
@@ -47,7 +51,27 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final GetRecipeFeedback _getRecipeFeedback;
   final SearchRecipes _searchRecipes;
   final FilterRecipes _filterRecipes;
+  final GenerateRecipe _generateRecipe;
 
+  Future<void> _generateRecipeHandler(
+      GenerateRecipeEvent event,
+      Emitter<RecipeState> emit,
+      ) async {
+    emit(const RecipeLoading());
+    final result = await _generateRecipe(
+      GenerateRecipeParams(
+        images: event.images,
+        ingredients: event.ingredients,
+        cuisines: event.cuisines,
+        dietaryRestrictions: event.dietaryRestrictions,
+      ),
+    );
+    result.fold(
+          (failure) => emit(RecipeError(message: failure.message)),
+          (recipe) => emit(RecipeGenerated(recipe: recipe)),
+    );
+  }
+}
   Future<void> _getRecipesHandler(
     GetRecipesEvent event,
     Emitter<RecipeState> emit,

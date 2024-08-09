@@ -2,6 +2,8 @@ import 'package:afrosine/src/recipe/data/models/feedback_model.dart';
 import 'package:afrosine/src/recipe/data/models/recipe_model.dart';
 import 'package:afrosine/src/recipe/domain/entities/ingredient.dart';
 
+const geminiApiKey = 'AIzaSyARfdRXEKmACctFSTMs08t_pMIIYIh4KQM';
+
 const kDefaultAvatar =
     'https://images.freeimages.com/fic/images/icons/573/must_have/256/user.png';
 
@@ -25,7 +27,7 @@ List<RecipeModel> dummyRecipes() {
       id: '1',
       name: 'Pancakes',
       description: 'Fluffy pancakes served with syrup and fresh fruit.',
-      imageUrl: 'https://example.com/pancakes.jpg',
+      imageUrl: kDefaultAvatar,
       ingredients: [
         Ingredient(name: 'Flour', quantity: '1 cup', unit: 'cup'),
         Ingredient(name: 'Milk', quantity: '1 cup', unit: 'cup'),
@@ -53,7 +55,7 @@ List<RecipeModel> dummyRecipes() {
       name: 'Chicken Curry',
       description:
           'A flavorful curry with tender chicken pieces simmered in a spicy sauce.',
-      imageUrl: 'https://example.com/chicken_curry.jpg',
+      imageUrl: kDefaultAvatar,
       ingredients: const [
         Ingredient(name: 'Chicken Breast', quantity: '500g', unit: 'grams'),
         Ingredient(name: 'Onion', quantity: '1', unit: 'piece'),
@@ -90,7 +92,7 @@ List<RecipeModel> dummyRecipes() {
       id: '3',
       name: 'Beef Stew',
       description: 'Hearty beef stew with vegetables and rich gravy.',
-      imageUrl: 'https://example.com/beef_stew.jpg',
+      imageUrl: kDefaultAvatar,
       ingredients: const [
         Ingredient(name: 'Beef Chuck', quantity: '1 kg', unit: 'kilogram'),
         Ingredient(name: 'Carrots', quantity: '3', unit: 'pieces'),
@@ -128,7 +130,7 @@ List<RecipeModel> dummyRecipes() {
       id: '4',
       name: 'Vegetable Stir-Fry',
       description: 'Quick and easy vegetable stir-fry with a tangy sauce.',
-      imageUrl: 'https://example.com/vegetable_stirfry.jpg',
+      imageUrl: kDefaultAvatar,
       ingredients: [
         Ingredient(name: 'Bell Peppers', quantity: '2', unit: 'pieces'),
         Ingredient(name: 'Broccoli', quantity: '1 cup', unit: 'cup'),
@@ -156,7 +158,7 @@ List<RecipeModel> dummyRecipes() {
       id: '5',
       name: 'Grilled Salmon',
       description: 'Salmon fillets grilled with a lemon dill marinade.',
-      imageUrl: 'https://example.com/grilled_salmon.jpg',
+      imageUrl: kDefaultAvatar,
       ingredients: const [
         Ingredient(name: 'Salmon Fillets', quantity: '4', unit: 'pieces'),
         Ingredient(name: 'Lemon', quantity: '1', unit: 'piece'),

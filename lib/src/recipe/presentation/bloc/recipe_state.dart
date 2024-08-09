@@ -83,3 +83,12 @@ class RecipesFiltered extends RecipeState {
   @override
   List<Object> get props => [recipes];
 }
+
+class RecipeGenerated extends RecipeState {
+  const RecipeGenerated({required this.recipe});
+
+  final Recipe recipe;
+
+  @override
+  List<Object> get props => [recipe];
+}

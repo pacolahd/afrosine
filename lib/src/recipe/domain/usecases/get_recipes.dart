@@ -3,6 +3,8 @@ import 'package:afrosine/core/utils/typedefs.dart';
 import 'package:afrosine/src/recipe/domain/entities/feedback.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/domain/repos/recipe_repo.dart';
+import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GetRecipes implements UseCaseWithoutParams<List<Recipe>> {
   GetRecipes(this._repository);
@@ -10,6 +12,40 @@ class GetRecipes implements UseCaseWithoutParams<List<Recipe>> {
 
   @override
   ResultFuture<List<Recipe>> call() => _repository.getRecipes();
+}
+
+class GenerateRecipe
+    implements UseCaseWithParams<Recipe, GenerateRecipeParams> {
+  const GenerateRecipe(this._repo);
+
+  final RecipeRepository _repo;
+
+  @override
+  ResultFuture<Recipe> call(GenerateRecipeParams params) async =>
+      _repo.generateRecipe(
+        images: params.images,
+        ingredients: params.ingredients,
+        cuisines: params.cuisines,
+        dietaryRestrictions: params.dietaryRestrictions,
+      );
+}
+
+class GenerateRecipeParams extends Equatable {
+  final List<XFile>? images;
+  final List<String> ingredients;
+  final List<String>? cuisines;
+  final List<String>? dietaryRestrictions;
+
+  const GenerateRecipeParams({
+    this.images,
+    required this.ingredients,
+    this.cuisines,
+    this.dietaryRestrictions,
+  });
+
+  @override
+  List<Object?> get props =>
+      [images, ingredients, cuisines, dietaryRestrictions];
 }
 
 class GetRecipeById implements UseCaseWithParams<Recipe, String> {

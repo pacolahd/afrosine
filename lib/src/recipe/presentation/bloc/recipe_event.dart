@@ -3,12 +3,13 @@ part of 'recipe_bloc.dart';
 abstract class RecipeEvent extends Equatable {
   const RecipeEvent();
 
-  @override
-  List<Object> get props => [];
+
 }
 
 class GetRecipesEvent extends RecipeEvent {
   const GetRecipesEvent();
+  @override
+  List<Object> get props => [ ];
 }
 
 class GetRecipeByIdEvent extends RecipeEvent {
@@ -74,4 +75,21 @@ class FilterRecipesEvent extends RecipeEvent {
 
   @override
   List<Object> get props => [params];
+}
+
+class GenerateRecipeEvent extends RecipeEvent {
+  final List<XFile>? images;
+  final List<String> ingredients;
+  final List<String>? cuisines;
+  final List<String>? dietaryRestrictions;
+
+  const GenerateRecipeEvent({
+    this.images,
+    required this.ingredients,
+    this.cuisines,
+    this.dietaryRestrictions,
+  });
+
+  @override
+  List<Object?> get props => [images, ingredients, cuisines, dietaryRestrictions];
 }

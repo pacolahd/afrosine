@@ -1,3 +1,4 @@
+import 'package:afrosine/core/utils/constants.dart';
 import 'package:afrosine/src/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:afrosine/src/auth/data/repos/auth_repo_impl.dart';
 import 'package:afrosine/src/auth/domain/repos/auth_repo.dart';
@@ -12,7 +13,8 @@ import 'package:afrosine/src/on_boarding/domain/repos/on_boarding_repo.dart';
 import 'package:afrosine/src/on_boarding/domain/usecases/cache_first_timer.dart';
 import 'package:afrosine/src/on_boarding/domain/usecases/check_if_user_is_first_timer.dart';
 import 'package:afrosine/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
-import 'package:afrosine/src/recipe/data/datasources/recipe_local_data_src.dart';
+import 'package:afrosine/src/recipe/data/datasources/database_helper.dart';
+import 'package:afrosine/src/recipe/data/datasources/gemini_ai_service.dart';
 import 'package:afrosine/src/recipe/data/datasources/recipe_remote_data_src.dart';
 import 'package:afrosine/src/recipe/data/repos/recipe_repo_impl.dart';
 import 'package:afrosine/src/recipe/domain/repos/recipe_repo.dart';
@@ -22,8 +24,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 part 'injection_container.main.dart';

@@ -6,6 +6,7 @@ import 'package:afrosine/core/services/injection_container.dart';
 import 'package:afrosine/src/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afrosine/src/home/presentation/views/home_screen.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_finder_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,11 +42,10 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       child: HomeScreen(),
     ),
 
-    // Sermons
-    const Center(
-      child: Text('Recipe Finder'),
+    BlocProvider(
+      create: (_) => sl<RecipeBloc>(),
+      child: RecipeFinderScreen(),
     ),
-    // Events
     const Center(
       child: Text('Favourites'),
     ),

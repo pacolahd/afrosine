@@ -1,21 +1,35 @@
+import 'dart:convert';
+
 import 'package:afrosine/core/errors/exceptions.dart';
 import 'package:afrosine/core/utils/constants.dart';
+import 'package:afrosine/core/utils/typedefs.dart';
+import 'package:afrosine/src/recipe/data/datasources/gemini_ai_service.dart';
 import 'package:afrosine/src/recipe/data/models/feedback_model.dart';
 import 'package:afrosine/src/recipe/data/models/recipe_model.dart';
+import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class RecipeRemoteDataSource {
   const RecipeRemoteDataSource();
 
+  Future<RecipeModel> generateRecipe({
+    List<XFile>? images,
+    required List<String> ingredients,
+    List<String>? cuisines,
+    List<String>? dietaryRestrictions,
+  });
   Future<List<RecipeModel>> getRecipes();
   Future<RecipeModel> getRecipeById(String id);
   Future<void> toggleFavoriteRecipe(String userId, String recipeId);
   Future<List<String>> getFavoriteRecipeIds(String userId);
   Future<void> addFeedback(FeedbackModel feedback);
   Future<List<FeedbackModel>> getRecipeFeedback(String recipeId);
+  Future<List<RecipeModel>> searchRecipes(String query);
+  Future<List<RecipeModel>> filterRecipes(FilterParams params);
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -23,14 +37,88 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
     required FirebaseAuth authClient,
     required FirebaseFirestore cloudStoreClient,
     required FirebaseStorage dbClient,
+    required GeminiAIService geminiAIService,
   })  : _authClient = authClient,
         _cloudStoreClient = cloudStoreClient,
-        _dbClient = dbClient;
+        _dbClient = dbClient,
+        _geminiAIService = geminiAIService;
 
   final FirebaseAuth _authClient;
   final FirebaseFirestore _cloudStoreClient;
   final FirebaseStorage _dbClient;
+  final GeminiAIService _geminiAIService;
 
+  @override
+  Future<RecipeModel> generateRecipe({
+    List<XFile>? images,
+    required List<String> ingredients,
+    List<String>? cuisines,
+    List<String>? dietaryRestrictions,
+  }) async {
+    try {
+      final jsonString = await _geminiAIService.generateRecipe(
+        images: images,
+        ingredients: ingredients,
+        cuisines: cuisines,
+        dietaryRestrictions: dietaryRestrictions,
+      );
+      final recipeMap = json.decode(jsonString);
+      return RecipeModel.fromMap(recipeMap as DataMap);
+    } catch (e) {
+      throw ServerException(message: e.toString(), statusCode: '500');
+    }
+  }
+
+  @override
+  Future<List<RecipeModel>> searchRecipes(String query) async {
+    try {
+      final recipeSnapshots = await _cloudStoreClient
+          .collection('recipes')
+          .where('name', isGreaterThanOrEqualTo: query.toLowerCase())
+          .where('name', isLessThan: query.toLowerCase() + 'z')
+          .get();
+      return recipeSnapshots.docs
+          .map((doc) => RecipeModel.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      throw ServerException(message: e.toString(), statusCode: '500');
+    }
+  }
+
+  @override
+  Future<List<RecipeModel>> filterRecipes(FilterParams params) async {
+    try {
+      Query query = _cloudStoreClient.collection('recipes');
+
+      if (params.mealTypes != null && params.mealTypes!.isNotEmpty) {
+        query = query.where('mealTypes', arrayContainsAny: params.mealTypes);
+      }
+      if (params.cuisineTypes != null && params.cuisineTypes!.isNotEmpty) {
+        query = query.where('cuisine', whereIn: params.cuisineTypes);
+      }
+      if (params.dishTypes != null && params.dishTypes!.isNotEmpty) {
+        query = query.where('dishType', whereIn: params.dishTypes);
+      }
+      if (params.preparationMethods != null &&
+          params.preparationMethods!.isNotEmpty) {
+        query = query.where('preparationMethod',
+            whereIn: params.preparationMethods);
+      }
+      if (params.spiceLevels != null && params.spiceLevels!.isNotEmpty) {
+        query = query.where('spiceLevel', whereIn: params.spiceLevels);
+      }
+      if (params.servingSizes != null && params.servingSizes!.isNotEmpty) {
+        query = query.where('servingSize', whereIn: params.servingSizes);
+      }
+
+      final recipeSnapshots = await query.get();
+      return recipeSnapshots.docs
+          .map((doc) => RecipeModel.fromMap(doc.data()! as DataMap))
+          .toList();
+    } catch (e) {
+      throw ServerException(message: e.toString(), statusCode: '500');
+    }
+  }
   // @override
   // Future<List<RecipeModel>> getRecipes() async {
   //   try {
