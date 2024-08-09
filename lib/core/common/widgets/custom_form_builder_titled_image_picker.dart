@@ -71,7 +71,7 @@ class CustomFormBuilderTitledImagePicker extends StatelessWidget {
           child: FormBuilderImagePicker(
             name: name,
             displayCustomType: (obj) => obj is XFile ? obj.path : obj,
-            maxImages: 1,
+            maxImages: 2,
             placeholderWidget: const Center(
               child: Icon(
                 Icons.add_photo_alternate_outlined,

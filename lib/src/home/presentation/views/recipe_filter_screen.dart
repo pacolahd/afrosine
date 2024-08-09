@@ -24,7 +24,13 @@ class _FilterScreenState extends State<FilterScreen> {
     'Serving size': ['Single-serving', 'Family size', 'Party size'],
   };
 
-  final Map<String, List<String>> _selectedFilters = {};
+  late Map<String, List<String>> _selectedFilters;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFilters = Map.from(context.read<RecipeBloc>().currentFilters);
+  }
 
   @override
   Widget build(BuildContext context) {

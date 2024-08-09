@@ -46,6 +46,14 @@ class FavoriteRecipeIdsLoaded extends RecipeState {
   List<Object> get props => [favoriteIds];
 }
 
+class FavoriteRecipesLoaded extends RecipeState {
+  const FavoriteRecipesLoaded({required this.favoriteRecipeIds});
+  final List<String> favoriteRecipeIds;
+
+  @override
+  List<Object> get props => [favoriteRecipeIds];
+}
+
 class RecipeError extends RecipeState {
   const RecipeError({required this.message});
 
@@ -84,11 +92,19 @@ class RecipesFiltered extends RecipeState {
   List<Object> get props => [recipes];
 }
 
-class RecipeGenerated extends RecipeState {
-  const RecipeGenerated({required this.recipe});
+// class RecipeGenerated extends RecipeState {
+//   const RecipeGenerated({required this.recipe});
+//
+//   final Recipe recipe;
+//
+//   @override
+//   List<Object> get props => [recipe];
+// }
 
-  final Recipe recipe;
+class RecipesGenerated extends RecipeState {
+  const RecipesGenerated({required this.recipes});
+  final List<Recipe> recipes;
 
   @override
-  List<Object> get props => [recipe];
+  List<Object> get props => [recipes];
 }

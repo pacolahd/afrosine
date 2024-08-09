@@ -1,5 +1,7 @@
 // lib/src/recipe/presentation/views/recipe_finder_screen.dart
 
+import 'package:afrosine/core/common/widgets/custom_form_builder_titled_image_picker.dart';
+import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -53,14 +55,9 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
       appBar: AppBar(title: Text('Find Recipes with Your Ingredients')),
       body: BlocConsumer<RecipeBloc, RecipeState>(
         listener: (context, state) {
-          if (state is RecipeGenerated) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => RecipeDetailsScreen(recipe: state.recipe),
-              ),
-            );
+          if (state is RecipesGenerated) {
+            _showRecipeSelectionDialog(context, state.recipes);
           } else if (state is RecipeError) {
-            debugPrint(state.message);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
@@ -78,19 +75,25 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Enter or take a picture of the ingredients you have on hand, and we\'ll find delicious recipes you can make. Add more ingredients to your list and refine your search. When you\'re ready, click \'Find Recipes\' to discover the options that match your ingredients!',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  'Enter or take pictures of the ingredients you have on hand, and we\'ll find delicious recipes you can make. Add more ingredients to your list and refine your search. When you\'re ready, click \'Find Recipes\' to discover the options that match your ingredients!',
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _getImage,
-                  child: Text('Upload photo'),
+                CustomFormBuilderTitledImagePicker(
+                  title: 'Ingredient Images',
+                  name: 'ingredientImages',
+                  labelText: 'Pick Images',
+                  hintText: 'Tap to add ingredient images',
+                  required: false,
+                  onChanged: (images) {
+                    if (images != null) {
+                      setState(() {
+                        _images =
+                            images.map((image) => image as XFile).toList();
+                      });
+                    }
+                  },
                 ),
-                if (_images != null && _images!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text('Image uploaded: ${_images!.first.name}'),
-                  ),
                 SizedBox(height: 16),
                 Text(
                   'Staple ingredients',
@@ -176,8 +179,8 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
                 SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _findRecipe,
-                    child: Text('Find Recipe'),
+                    onPressed: _findRecipes,
+                    child: Text('Find Recipes'),
                     style: ElevatedButton.styleFrom(
                       padding:
                           EdgeInsets.symmetric(horizontal: 32, vertical: 16),
@@ -194,23 +197,13 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
     );
   }
 
-  Future<void> _getImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _images = [image];
-      });
-    }
-  }
-
-  void _findRecipe() {
+  void _findRecipes() {
     final ingredients = [
       ..._selectedStapleIngredients,
       ..._additionalIngredientsController.text.split(',').map((e) => e.trim()),
     ];
     context.read<RecipeBloc>().add(
-          GenerateRecipeEvent(
+          GenerateRecipesEvent(
             images: _images,
             ingredients: ingredients,
             cuisines: _selectedCuisines.isNotEmpty ? _selectedCuisines : null,
@@ -219,6 +212,44 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
                 : null,
           ),
         );
+  }
+
+  void _showRecipeSelectionDialog(BuildContext context, List<Recipe> recipes) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Choose a Recipe'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: recipes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Image.network(
+                    recipes[index].imageUrl,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                  title: Text(recipes[index].name),
+                  subtitle: Text(recipes[index].description),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(
+                      context,
+                      RecipeDetailsScreen.routeName,
+                      arguments: recipes[index],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override

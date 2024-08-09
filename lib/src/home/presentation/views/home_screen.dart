@@ -104,7 +104,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 showDragHandle: true,
                 elevation: 0,
                 useSafeArea: true,
-                builder: (context) => FilterScreen(),
+                builder: (_) => BlocProvider.value(
+                  value: BlocProvider.of<RecipeBloc>(context),
+                  child: FilterScreen(),
+                ),
+                // builder: (_) => MultiBlocProvider(
+                //   providers: [
+                //     BlocProvider(create: (_) => sl<RecipeBloc>()),
+                //   ],
+                //   child: FilterScreen(),
+                // ),
               );
             },
           ),

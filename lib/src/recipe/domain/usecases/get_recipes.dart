@@ -14,15 +14,15 @@ class GetRecipes implements UseCaseWithoutParams<List<Recipe>> {
   ResultFuture<List<Recipe>> call() => _repository.getRecipes();
 }
 
-class GenerateRecipe
-    implements UseCaseWithParams<Recipe, GenerateRecipeParams> {
-  const GenerateRecipe(this._repo);
+class GenerateRecipes
+    implements UseCaseWithParams<List<Recipe>, GenerateRecipesParams> {
+  const GenerateRecipes(this._repo);
 
   final RecipeRepository _repo;
 
   @override
-  ResultFuture<Recipe> call(GenerateRecipeParams params) async =>
-      _repo.generateRecipe(
+  ResultFuture<List<Recipe>> call(GenerateRecipesParams params) async =>
+      _repo.generateRecipes(
         images: params.images,
         ingredients: params.ingredients,
         cuisines: params.cuisines,
@@ -30,13 +30,13 @@ class GenerateRecipe
       );
 }
 
-class GenerateRecipeParams extends Equatable {
+class GenerateRecipesParams extends Equatable {
   final List<XFile>? images;
   final List<String> ingredients;
   final List<String>? cuisines;
   final List<String>? dietaryRestrictions;
 
-  const GenerateRecipeParams({
+  const GenerateRecipesParams({
     this.images,
     required this.ingredients,
     this.cuisines,

@@ -5,12 +5,20 @@ import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
 import 'package:image_picker/image_picker.dart';
 
 abstract class RecipeRepository {
-  ResultFuture<Recipe> generateRecipe({
+  ResultFuture<List<Recipe>> generateRecipes({
     List<XFile>? images,
     required List<String> ingredients,
     List<String>? cuisines,
     List<String>? dietaryRestrictions,
   });
+
+  // ResultFuture<Recipe> generateRecipe({
+  //   List<XFile>? images,
+  //   required List<String> ingredients,
+  //   List<String>? cuisines,
+  //   List<String>? dietaryRestrictions,
+  // });
+
   ResultFuture<List<Recipe>> getRecipes();
   ResultFuture<Recipe> getRecipeById(String id);
   ResultFuture<void> toggleFavoriteRecipe(

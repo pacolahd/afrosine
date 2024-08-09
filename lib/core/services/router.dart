@@ -14,11 +14,14 @@ import 'package:afrosine/src/on_boarding/data/datasources/on_boarding_local_data
 import 'package:afrosine/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:afrosine/src/on_boarding/presentation/views/on_boarding_screen.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fui;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../src/recipe/domain/entities/recipe.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -136,6 +139,19 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         settings: settings,
       );
 
+    case RecipeDetailsScreen.routeName:
+      final recipe = settings.arguments! as Recipe;
+      return _pageBuilder(
+        (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<RecipeBloc>()),
+          ],
+          child: RecipeDetailsScreen(recipe: recipe),
+        ),
+        settings: settings,
+      );
+
     default:
       return _pageBuilder(
         (_) => const PageUnderConstruction(),
@@ -143,6 +159,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
   }
 }
+
+// flutter_form_builder: ^9.3.0
+// form_builder_validators: ^10.0.1
+// form_builder_extra_fields: ^10.2.0
+// form_builder_image_picker: ^4.0.0
 
 PageRouteBuilder<dynamic> _pageBuilder(
   // we want to collect the context too from the page we're coming from

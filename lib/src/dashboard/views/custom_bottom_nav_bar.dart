@@ -4,6 +4,7 @@ import 'package:afrosine/core/common/widgets/custom_list_tile_2.dart';
 import 'package:afrosine/core/extensions/context_extension.dart';
 import 'package:afrosine/core/services/injection_container.dart';
 import 'package:afrosine/src/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afrosine/src/home/presentation/views/favourite_recipes_screen.dart';
 import 'package:afrosine/src/home/presentation/views/home_screen.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:afrosine/src/recipe/presentation/views/recipe_finder_screen.dart';
@@ -46,8 +47,10 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       create: (_) => sl<RecipeBloc>(),
       child: RecipeFinderScreen(),
     ),
-    const Center(
-      child: Text('Favourites'),
+
+    BlocProvider(
+      create: (_) => sl<RecipeBloc>(),
+      child: FavoriteRecipesScreen(),
     ),
     // Profile
     MultiBlocProvider(

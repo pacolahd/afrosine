@@ -16,6 +16,8 @@ class Recipe extends Equatable {
     required this.spiceLevel,
     required this.servingSize,
     required this.mealTypes,
+    required this.servingSuggestions,
+    required this.nutritionalContent,
     this.rating = 0.0,
     this.ratingCount = 0,
     this.feedback = const [],
@@ -35,6 +37,8 @@ class Recipe extends Equatable {
           spiceLevel: '',
           servingSize: '',
           mealTypes: const [],
+          servingSuggestions: '',
+          nutritionalContent: '',
         );
 
   final String id;
@@ -52,6 +56,8 @@ class Recipe extends Equatable {
   final double rating;
   final int ratingCount;
   final List<Feedback> feedback;
+  final String servingSuggestions;
+  final String nutritionalContent;
 
   @override
   List<Object?> get props => [
@@ -70,10 +76,12 @@ class Recipe extends Equatable {
         rating,
         ratingCount,
         feedback,
+        servingSuggestions,
+        nutritionalContent,
       ];
 
   @override
   String toString() {
-    return 'Recipe{id: $id, name: $name, cuisine: $cuisine, dishType: $dishType, mealTypes: $mealTypes, rating: $rating, ratingCount: $ratingCount, feedback: $feedback}';
+    return 'Recipe{id: $id, name: $name, cuisine: $cuisine, dishType: $dishType, mealTypes: $mealTypes, rating: $rating, ratingCount: $ratingCount, feedback: $feedback, servingSuggestions: $servingSuggestions, nutritionalContent: $nutritionalContent}';
   }
 }

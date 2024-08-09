@@ -31,7 +31,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
     if (_searchController.text.isNotEmpty) {
       context
           .read<RecipeBloc>()
-          .add(SearchRecipesEvent(_searchController.text));
+          .add(SearchRecipesEvent(_searchController.text.trim()));
     }
   }
 
@@ -41,7 +41,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Search recipes...',
             border: InputBorder.none,
           ),
@@ -49,17 +49,21 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> {
       ),
       body: BlocBuilder<RecipeBloc, RecipeState>(
         builder: (context, state) {
-          if (state is RecipesLoaded) {
+          if (state is RecipesLoaded && state.recipes.isNotEmpty) {
             return ListView.builder(
               itemCount: state.recipes.length,
               itemBuilder: (context, index) {
                 return RecipeListItem(recipe: state.recipes[index]);
               },
             );
+          } else if (state is RecipesLoaded && state.recipes.isEmpty) {
+            return const Center(child: Text('No recipes found'));
           } else if (state is RecipeError) {
             return Center(child: Text(state.message));
+          } else if (state is RecipeLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: Text('Search something'));
         },
       ),
     );

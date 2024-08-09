@@ -19,6 +19,8 @@ class RecipeModel extends Recipe {
     required super.spiceLevel,
     required super.servingSize,
     required super.mealTypes,
+    required super.nutritionalContent,
+    required super.servingSuggestions,
     super.rating = 0.0,
     super.ratingCount = 0,
     super.feedback = const [],
@@ -62,9 +64,9 @@ class RecipeModel extends Recipe {
   factory RecipeModel.fromMap(DataMap map) {
     return RecipeModel(
       id: map['id'] as String? ?? '',
-      name: map['recipe_title'] as String? ?? '',
+      name: map['name'] as String? ?? '',
       description: map['description'] as String? ?? '',
-      imageUrl: map['image_url'] as String? ?? 'placeholder_image_url',
+      imageUrl: map['imageUrl'] as String? ?? 'defaultFoodImage',
       ingredients: (map['ingredients'] as List<dynamic>?)
               ?.map(
                 (ingredientMap) => Ingredient(
@@ -77,12 +79,12 @@ class RecipeModel extends Recipe {
           [],
       instructions:
           List<String>.from(map['instructions'] as List<dynamic>? ?? []),
-      cuisine: map['cuisine_type'] as String? ?? '',
-      dishType: map['dish_type'] as String? ?? '',
-      preparationMethod: map['preparation_method'] as String? ?? '',
-      spiceLevel: map['spice_level'] as String? ?? '',
-      servingSize: map['serving_size'] as String? ?? '',
-      mealTypes: List<String>.from(map['meal_types'] as List<dynamic>? ?? []),
+      cuisine: map['cuisine'] as String? ?? '',
+      dishType: map['dishType'] as String? ?? '',
+      preparationMethod: map['preparationMethod'] as String? ?? '',
+      spiceLevel: map['spiceLevel'] as String? ?? '',
+      servingSize: map['servingSize'] as String? ?? '',
+      mealTypes: List<String>.from(map['mealTypes'] as List<dynamic>? ?? []),
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
       ratingCount: map['ratingCount'] as int? ?? 0,
       feedback: (map['feedback'] as List<dynamic>?)
@@ -91,6 +93,8 @@ class RecipeModel extends Recipe {
               )
               .toList() ??
           [],
+      servingSuggestions: map['servingSuggestions'] as String? ?? '',
+      nutritionalContent: map['nutritionalContent'] as String? ?? '',
     );
   }
 
@@ -117,6 +121,8 @@ class RecipeModel extends Recipe {
       'rating': rating,
       'ratingCount': ratingCount,
       'feedback': feedback.map((f) => (f as FeedbackModel).toMap()).toList(),
+      'servingSuggestions': servingSuggestions,
+      'nutritionalContent': nutritionalContent,
     };
   }
 
@@ -135,6 +141,11 @@ class RecipeModel extends Recipe {
     String? spiceLevel,
     String? servingSize,
     List<String>? mealTypes,
+    double? rating,
+    int? ratingCount,
+    List<FeedbackModel>? feedback,
+    String? servingSuggestions,
+    String? nutritionalContent,
   }) {
     return RecipeModel(
       id: id ?? this.id,
@@ -149,6 +160,11 @@ class RecipeModel extends Recipe {
       spiceLevel: spiceLevel ?? this.spiceLevel,
       servingSize: servingSize ?? this.servingSize,
       mealTypes: mealTypes ?? this.mealTypes,
+      rating: rating ?? this.rating,
+      ratingCount: ratingCount ?? this.ratingCount,
+      feedback: feedback ?? this.feedback,
+      servingSuggestions: servingSuggestions ?? this.servingSuggestions,
+      nutritionalContent: nutritionalContent ?? this.nutritionalContent,
     );
   }
 }

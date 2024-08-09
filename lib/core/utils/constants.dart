@@ -25,7 +25,7 @@ const String FIELD_RATING_COUNT = 'ratingCount';
 
 List<RecipeModel> dummyRecipes() {
   return [
-    const RecipeModel(
+    RecipeModel(
       id: '1',
       name: 'Pancakes',
       description: 'Fluffy pancakes served with syrup and fresh fruit.',
@@ -51,44 +51,8 @@ List<RecipeModel> dummyRecipes() {
       rating: 4.7,
       ratingCount: 12,
       feedback: [],
-    ),
-    RecipeModel(
-      id: '2',
-      name: 'Chicken Curry',
-      description:
-          'A flavorful curry with tender chicken pieces simmered in a spicy sauce.',
-      imageUrl: defaultFoodImage,
-      ingredients: const [
-        Ingredient(name: 'Chicken Breast', quantity: '500g', unit: 'grams'),
-        Ingredient(name: 'Onion', quantity: '1', unit: 'piece'),
-        Ingredient(name: 'Garlic', quantity: '3 cloves', unit: 'cloves'),
-        Ingredient(name: 'Curry Powder', quantity: '2 tbsp', unit: 'tbsp'),
-        Ingredient(name: 'Tomatoes', quantity: '2', unit: 'pieces'),
-        Ingredient(name: 'Coconut Milk', quantity: '1 can', unit: 'can'),
-      ],
-      instructions: const [
-        'Sauté onions and garlic until soft.',
-        'Add chicken pieces and cook until browned.',
-        'Stir in curry powder and tomatoes, then add coconut milk.',
-        'Simmer until chicken is cooked through and sauce is thickened.'
-      ],
-      cuisine: 'Indian',
-      dishType: 'Curry',
-      preparationMethod: 'Simmered',
-      spiceLevel: 'Medium',
-      servingSize: '4 servings',
-      mealTypes: const ['Lunch'],
-      rating: 4.5,
-      ratingCount: 20,
-      feedback: [
-        FeedbackModel(
-            userId: 'user3',
-            recipeId: '2',
-            rating: 4.8,
-            comment: 'Absolutely delicious! The curry was perfectly spiced.',
-            createdAt: DateTime.now(),
-            id: '9'),
-      ],
+      nutritionalContent: '',
+      servingSuggestions: '',
     ),
     RecipeModel(
       id: '3',
@@ -127,6 +91,8 @@ List<RecipeModel> dummyRecipes() {
           createdAt: DateTime.now(),
         ),
       ],
+      nutritionalContent: '',
+      servingSuggestions: '',
     ),
     const RecipeModel(
       id: '4',
@@ -155,6 +121,8 @@ List<RecipeModel> dummyRecipes() {
       rating: 4.3,
       ratingCount: 8,
       feedback: [],
+      nutritionalContent: '',
+      servingSuggestions: '',
     ),
     RecipeModel(
       id: '5',
@@ -191,6 +159,8 @@ List<RecipeModel> dummyRecipes() {
           createdAt: DateTime.now(),
         ),
       ],
+      nutritionalContent: '',
+      servingSuggestions: '',
     ),
   ];
 }

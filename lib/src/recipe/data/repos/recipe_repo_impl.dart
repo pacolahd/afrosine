@@ -15,24 +15,44 @@ class RecipeRepoImpl implements RecipeRepository {
   final RecipeRemoteDataSource _remoteDataSource;
 
   @override
-  ResultFuture<Recipe> generateRecipe({
+  ResultFuture<List<Recipe>> generateRecipes({
     List<XFile>? images,
     required List<String> ingredients,
     List<String>? cuisines,
     List<String>? dietaryRestrictions,
   }) async {
     try {
-      final recipe = await _remoteDataSource.generateRecipe(
+      final recipes = await _remoteDataSource.generateRecipes(
         images: images,
         ingredients: ingredients,
         cuisines: cuisines,
         dietaryRestrictions: dietaryRestrictions,
       );
-      return Right(recipe);
+      return Right(recipes);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     }
   }
+
+  // @override
+  // ResultFuture<Recipe> generateRecipe({
+  //   List<XFile>? images,
+  //   required List<String> ingredients,
+  //   List<String>? cuisines,
+  //   List<String>? dietaryRestrictions,
+  // }) async {
+  //   try {
+  //     final recipe = await _remoteDataSource.generateRecipe(
+  //       images: images,
+  //       ingredients: ingredients,
+  //       cuisines: cuisines,
+  //       dietaryRestrictions: dietaryRestrictions,
+  //     );
+  //     return Right(recipe);
+  //   } on ServerException catch (e) {
+  //     return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+  //   }
+  // }
 
   @override
   ResultFuture<List<Recipe>> getRecipes() async {

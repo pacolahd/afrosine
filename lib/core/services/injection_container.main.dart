@@ -83,18 +83,20 @@ Future<void> _initRecipe() async {
 
   sl
     ..registerLazySingleton(() => databaseHelper)
-    ..registerFactory(() => RecipeBloc(
-          getRecipes: sl(),
-          getRecipeById: sl(),
-          toggleFavoriteRecipe: sl(),
-          getFavoriteRecipeIds: sl(),
-          addFeedback: sl(),
-          getRecipeFeedback: sl(),
-          searchRecipes: sl(),
-          filterRecipes: sl(),
-          generateRecipe: sl(),
-        ))
-    ..registerLazySingleton(() => GenerateRecipe(sl()))
+    ..registerFactory(
+      () => RecipeBloc(
+        getRecipes: sl(),
+        getRecipeById: sl(),
+        toggleFavoriteRecipe: sl(),
+        getFavoriteRecipeIds: sl(),
+        addFeedback: sl(),
+        getRecipeFeedback: sl(),
+        searchRecipes: sl(),
+        filterRecipes: sl(),
+        generateRecipes: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GenerateRecipes(sl()))
     ..registerLazySingleton(() => GetRecipes(sl()))
     ..registerLazySingleton(() => GetRecipeById(sl()))
     ..registerLazySingleton(() => ToggleFavoriteRecipe(sl()))
