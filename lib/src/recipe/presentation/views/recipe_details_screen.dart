@@ -1,7 +1,10 @@
 // lib/src/recipe/presentation/views/recipe_details_screen.dart
 
+import 'package:afrosine/core/common/app/providers/user_provider.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
+import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecipeDetailsScreen extends StatelessWidget {
   final Recipe recipe;
@@ -12,15 +15,24 @@ class RecipeDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        title: Text(recipe.name),
         actions: [
           IconButton(
             icon: Icon(Icons.bookmark_border),
             onPressed: () {
-              // TODO: Implement bookmark functionality
+              final userId = context.read<UserProvider>().user?.uid;
+              if (userId != null) {
+                context.read<RecipeBloc>().add(
+                      ToggleFavoriteRecipeEvent(
+                        userId: userId,
+                        recipeId: recipe.id,
+                      ),
+                    );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Please log in to bookmark recipes')),
+                );
+              }
             },
           ),
         ],
@@ -42,17 +54,25 @@ class RecipeDetailsScreen extends StatelessWidget {
                 children: [
                   Text(
                     recipe.name,
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 8),
                   Text(
                     recipe.description,
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
+                  SizedBox(height: 16),
+                  _buildInfoSection('Cuisine', recipe.cuisine),
+                  _buildInfoSection('Dish Type', recipe.dishType),
+                  _buildInfoSection(
+                      'Preparation Method', recipe.preparationMethod),
+                  _buildInfoSection('Spice Level', recipe.spiceLevel),
+                  _buildInfoSection('Serving Size', recipe.servingSize),
+                  _buildInfoSection('Meal Types', recipe.mealTypes.join(', ')),
                   SizedBox(height: 16),
                   Text(
                     'Ingredients',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 8),
                   ...recipe.ingredients.map((ingredient) => Padding(
@@ -62,8 +82,8 @@ class RecipeDetailsScreen extends StatelessWidget {
                       )),
                   SizedBox(height: 16),
                   Text(
-                    'Preparation',
-                    style: Theme.of(context).textTheme.headline6,
+                    'Instructions',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 8),
                   ...recipe.instructions.asMap().entries.map((entry) => Padding(
@@ -71,22 +91,60 @@ class RecipeDetailsScreen extends StatelessWidget {
                         child: Text('${entry.key + 1}. ${entry.value}'),
                       )),
                   SizedBox(height: 16),
-                  Text(
-                    'Additional Information',
-                    style: Theme.of(context).textTheme.headline6,
+                  // Text(
+                  //   'Serving Suggestions',
+                  //   style: Theme.of(context).textTheme.titleMedium,
+                  // ),
+                  // SizedBox(height: 8),
+                  // Text(recipe.servingSuggestions),
+                  // SizedBox(height: 16),
+                  // Text(
+                  //   'Nutritional Content',
+                  //   style: Theme.of(context).textTheme.titleMedium,
+                  // ),
+                  // SizedBox(height: 8),
+                  // Text(recipe.nutritionalContent),
+                  // SizedBox(height: 24),
+                  if (recipe.rating > 0)
+                    Row(
+                      children: [
+                        Text('Rating: '),
+                        ...List.generate(
+                            5,
+                            (index) => Icon(
+                                  index < recipe.rating.round()
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber,
+                                )),
+                        SizedBox(width: 8),
+                        Text('(${recipe.ratingCount} reviews)'),
+                      ],
+                    ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to feedback screen or show feedback dialog
+                    },
+                    child: Text('Leave Feedback'),
                   ),
-                  SizedBox(height: 8),
-                  Text('Cuisine: ${recipe.cuisine}'),
-                  Text('Dish Type: ${recipe.dishType}'),
-                  Text('Preparation Method: ${recipe.preparationMethod}'),
-                  Text('Spice Level: ${recipe.spiceLevel}'),
-                  Text('Serving Size: ${recipe.servingSize}'),
-                  Text('Meal Types: ${recipe.mealTypes.join(", ")}'),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Text('$title: ', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(content),
+        ],
       ),
     );
   }

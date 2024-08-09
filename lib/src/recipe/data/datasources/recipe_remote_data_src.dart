@@ -62,9 +62,16 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
         cuisines: cuisines,
         dietaryRestrictions: dietaryRestrictions,
       );
-      final recipeMap = json.decode(jsonString);
-      return RecipeModel.fromMap(recipeMap as DataMap);
+      final recipeMap = json.decode(jsonString) as DataMap;
+      return RecipeModel.fromMap(recipeMap);
     } catch (e) {
+      debugPrint('Error generating recipe: ${e.toString()}');
+      if (e is FormatException) {
+        throw const ServerException(
+          message: 'Invalid response format from AI service',
+          statusCode: '500',
+        );
+      }
       throw ServerException(message: e.toString(), statusCode: '500');
     }
   }

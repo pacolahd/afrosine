@@ -54,9 +54,9 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final GenerateRecipe _generateRecipe;
 
   Future<void> _generateRecipeHandler(
-      GenerateRecipeEvent event,
-      Emitter<RecipeState> emit,
-      ) async {
+    GenerateRecipeEvent event,
+    Emitter<RecipeState> emit,
+  ) async {
     emit(const RecipeLoading());
     final result = await _generateRecipe(
       GenerateRecipeParams(
@@ -67,11 +67,11 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       ),
     );
     result.fold(
-          (failure) => emit(RecipeError(message: failure.message)),
-          (recipe) => emit(RecipeGenerated(recipe: recipe)),
+      (failure) => emit(RecipeError(message: failure.message)),
+      (recipe) => emit(RecipeGenerated(recipe: recipe)),
     );
   }
-}
+
   Future<void> _getRecipesHandler(
     GetRecipesEvent event,
     Emitter<RecipeState> emit,
