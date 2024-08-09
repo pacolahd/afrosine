@@ -1,5 +1,5 @@
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
-import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_overview_screen.dart';
 import 'package:flutter/material.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -12,7 +12,7 @@ class RecipeCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
-          RecipeDetailsScreen.routeName,
+          RecipeOverviewScreen.routeName,
           arguments: recipe,
         );
       },

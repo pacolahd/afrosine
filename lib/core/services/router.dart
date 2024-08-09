@@ -14,7 +14,9 @@ import 'package:afrosine/src/on_boarding/data/datasources/on_boarding_local_data
 import 'package:afrosine/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:afrosine/src/on_boarding/presentation/views/on_boarding_screen.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
-import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
+import 'package:afrosine/src/recipe/presentation/views/feedback_screen.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_instructions_screen.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_overview_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fui;
 import 'package:flutter/material.dart';
@@ -139,7 +141,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         settings: settings,
       );
 
-    case RecipeDetailsScreen.routeName:
+    case RecipeOverviewScreen.routeName:
       final recipe = settings.arguments! as Recipe;
       return _pageBuilder(
         (_) => MultiBlocProvider(
@@ -147,7 +149,31 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             BlocProvider(create: (_) => sl<AuthBloc>()),
             BlocProvider(create: (_) => sl<RecipeBloc>()),
           ],
-          child: RecipeDetailsScreen(recipe: recipe),
+          child: RecipeOverviewScreen(recipe: recipe),
+        ),
+        settings: settings,
+      );
+    case RecipeInstructionsScreen.routeName:
+      final recipe = settings.arguments! as Recipe;
+      return _pageBuilder(
+        (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<RecipeBloc>()),
+          ],
+          child: RecipeInstructionsScreen(recipe: recipe),
+        ),
+        settings: settings,
+      );
+    case FeedbackScreen.routeName:
+      final recipe = settings.arguments! as Recipe;
+      return _pageBuilder(
+        (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => sl<AuthBloc>()),
+            BlocProvider(create: (_) => sl<RecipeBloc>()),
+          ],
+          child: FeedbackScreen(recipe: recipe),
         ),
         settings: settings,
       );

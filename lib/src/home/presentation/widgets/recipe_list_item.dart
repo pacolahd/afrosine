@@ -1,4 +1,5 @@
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_overview_screen.dart';
 import 'package:flutter/material.dart';
 
 class RecipeListItem extends StatelessWidget {
@@ -19,7 +20,11 @@ class RecipeListItem extends StatelessWidget {
       subtitle: Text(recipe.cuisine),
       trailing: Icon(Icons.chevron_right),
       onTap: () {
-        // TODO: Navigate to recipe details
+        Navigator.pushNamed(
+          context,
+          RecipeOverviewScreen.routeName,
+          arguments: recipe,
+        );
       },
     );
   }

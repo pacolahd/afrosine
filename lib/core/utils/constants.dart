@@ -23,107 +23,82 @@ const String FIELD_IS_FAVORITE = 'isFavorite';
 const String FIELD_RATING = 'rating';
 const String FIELD_RATING_COUNT = 'ratingCount';
 
+// lib/src/recipe/constants/recipe_constants.dart
+
+class RecipeConstants {
+  static const List<String> dishTypes = [
+    'Stews and Soups',
+    'Curries',
+    'Stir-fries',
+    'Salads',
+    'Grilled Dishes',
+    'Fried Dishes',
+    'Baked Dishes',
+    'Roasted Dishes',
+    'Braised Dishes',
+    'Boiled Dishes',
+    'Sautéed Dishes',
+    'Desserts',
+    'Sandwiches',
+    'Pasta Dishes',
+    'Rice Dishes',
+    'Casseroles',
+    'Seafood Dishes',
+    'Appetizers',
+    'Beverages',
+    'Breakfast Dishes',
+    'Bread and Pastries',
+    'Vegetarian Dishes',
+    'Vegan Dishes'
+  ];
+
+  static const List<String> preparationMethods = [
+    'Grilled',
+    'Fried',
+    'Baked',
+    'Roasted',
+    'Boiled',
+    'Sautéed',
+    'Steamed',
+    'Braised',
+    'Poached',
+    'Microwaved',
+    'Slow-cooked',
+    'Raw',
+    'Smoked',
+    'Blanched',
+    'Broiled',
+    'Pressure-cooked'
+  ];
+
+  static const List<String> cuisineTypes = [
+    'West African',
+    'East African',
+    'North African',
+    'South African',
+    'Central African'
+  ];
+
+  static const List<String> spiceLevels = [
+    'Mild',
+    'Medium',
+    'Spicy',
+    'Very Spicy',
+    'Extra Spicy'
+  ];
+
+  static const List<String> servingSizes = [
+    'Single-serving',
+    'Double-serving',
+    'Family size (serves 4)',
+    'Party size (serves 6+)'
+  ];
+
+  static const List<String> mealTypes = ['Breakfast', 'Lunch', 'Dinner'];
+}
+
 List<RecipeModel> dummyRecipes() {
   return [
-    RecipeModel(
-      id: '1',
-      name: 'Pancakes',
-      description: 'Fluffy pancakes served with syrup and fresh fruit.',
-      imageUrl: defaultFoodImage,
-      ingredients: [
-        Ingredient(name: 'Flour', quantity: '1 cup', unit: 'cup'),
-        Ingredient(name: 'Milk', quantity: '1 cup', unit: 'cup'),
-        Ingredient(name: 'Eggs', quantity: '2', unit: 'pieces'),
-        Ingredient(name: 'Baking Powder', quantity: '2 tsp', unit: 'tsp'),
-        Ingredient(name: 'Butter', quantity: '2 tbsp', unit: 'tbsp'),
-      ],
-      instructions: [
-        'Mix all ingredients until smooth.',
-        'Heat a non-stick skillet over medium heat.',
-        'Pour batter into skillet and cook until bubbles form, then flip and cook until golden brown.'
-      ],
-      cuisine: 'American',
-      dishType: 'Breakfast',
-      preparationMethod: 'Grilled',
-      spiceLevel: 'Mild',
-      servingSize: '4 servings',
-      mealTypes: ['Breakfast'],
-      rating: 4.7,
-      ratingCount: 12,
-      feedback: [],
-      nutritionalContent: '',
-      servingSuggestions: '',
-    ),
-    RecipeModel(
-      id: '3',
-      name: 'Beef Stew',
-      description: 'Hearty beef stew with vegetables and rich gravy.',
-      imageUrl: defaultFoodImage,
-      ingredients: const [
-        Ingredient(name: 'Beef Chuck', quantity: '1 kg', unit: 'kilogram'),
-        Ingredient(name: 'Carrots', quantity: '3', unit: 'pieces'),
-        Ingredient(name: 'Potatoes', quantity: '4', unit: 'pieces'),
-        Ingredient(name: 'Onions', quantity: '2', unit: 'pieces'),
-        Ingredient(name: 'Beef Broth', quantity: '4 cups', unit: 'cups'),
-        Ingredient(name: 'Tomato Paste', quantity: '2 tbsp', unit: 'tbsp'),
-      ],
-      instructions: const [
-        'Brown beef chunks in a pot.',
-        'Add onions and cook until soft.',
-        'Stir in carrots, potatoes, and tomato paste.',
-        'Pour in beef broth and simmer until beef is tender and vegetables are cooked.'
-      ],
-      cuisine: 'Western',
-      dishType: 'Stew',
-      preparationMethod: 'Simmered',
-      spiceLevel: 'Mild',
-      servingSize: '6 servings',
-      mealTypes: const ['Dinner'],
-      rating: 4.6,
-      ratingCount: 15,
-      feedback: [
-        FeedbackModel(
-          userId: 'user4',
-          recipeId: '3',
-          rating: 4.9,
-          comment: 'Comfort food at its best! Rich and satisfying.',
-          id: '8',
-          createdAt: DateTime.now(),
-        ),
-      ],
-      nutritionalContent: '',
-      servingSuggestions: '',
-    ),
-    const RecipeModel(
-      id: '4',
-      name: 'Vegetable Stir-Fry',
-      description: 'Quick and easy vegetable stir-fry with a tangy sauce.',
-      imageUrl: defaultFoodImage,
-      ingredients: [
-        Ingredient(name: 'Bell Peppers', quantity: '2', unit: 'pieces'),
-        Ingredient(name: 'Broccoli', quantity: '1 cup', unit: 'cup'),
-        Ingredient(name: 'Carrots', quantity: '2', unit: 'pieces'),
-        Ingredient(name: 'Soy Sauce', quantity: '3 tbsp', unit: 'tbsp'),
-        Ingredient(name: 'Ginger', quantity: '1 tbsp', unit: 'tbsp'),
-        Ingredient(name: 'Garlic', quantity: '2 cloves', unit: 'cloves'),
-      ],
-      instructions: [
-        'Heat oil in a pan and add garlic and ginger.',
-        'Add vegetables and stir-fry until crisp-tender.',
-        'Pour in soy sauce and cook for another 2 minutes.'
-      ],
-      cuisine: 'Chinese',
-      dishType: 'Stir-Fry',
-      preparationMethod: 'Stir-Fried',
-      spiceLevel: 'Mild',
-      servingSize: '4 servings',
-      mealTypes: ['Lunch'],
-      rating: 4.3,
-      ratingCount: 8,
-      feedback: [],
-      nutritionalContent: '',
-      servingSuggestions: '',
-    ),
     RecipeModel(
       id: '5',
       name: 'Grilled Salmon',

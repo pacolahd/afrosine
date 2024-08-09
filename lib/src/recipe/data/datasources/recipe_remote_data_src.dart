@@ -30,7 +30,7 @@ abstract class RecipeRemoteDataSource {
   // });
   Future<List<RecipeModel>> getRecipes();
   Future<RecipeModel> getRecipeById(String id);
-  Future<void> toggleFavoriteRecipe(String userId, String recipeId);
+  Future<List<String>> toggleFavoriteRecipe(String userId, String recipeId);
   Future<List<String>> getFavoriteRecipeIds(String userId);
   Future<void> addFeedback(FeedbackModel feedback);
   Future<List<FeedbackModel>> getRecipeFeedback(String recipeId);
@@ -148,41 +148,39 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   //   }
   // }
 
-  // Add this to the RecipeRemoteDataSourceImpl class
-
   Map<String, String> get preparationMethodImages => {
         'Grilled':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://static.vecteezy.com/system/resources/thumbnails/030/591/765/small_2x/a-chef-expertly-grilling-a-succulent-steak-over-an-open-flame-with-sizzling-sparks-and-mouthwatering-grill-marks-representing-the-mastery-of-the-culinary-craft-generative-ai-photo.jpeg',
         'Fried':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9JAVGAo10FWvSl3qKSecUV9y6ih3Kw8L05iOoyI8H1mVwvIozbnRiSnl8XQ4p3H6gyug&usqp=CAU',
         'Baked':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'hhttps://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_qHk71FqlM0yDWs1S4w-jjFGYaqqYqVnjYiRNtTvapGSD3zRKUVH-oVKR9r6cUiuUrOM&usqp=CAU',
         'Roasted':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz6Aw3QkzB7fgoXt_LYQVzDOwwVYIvNY_VhXxlV1f3y9ZNLCU_XbRDGHD8PxD_hQya5LE&usqp=CAU',
         'Boiled':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVlXlGahzKQE-Xg4T_V69pdd2TnGIQxDIu4w9X7DzLltsl2yFuBkD3mRyNXJBrv-O6H98&usqp=CAU',
         'Sautéed':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkD0qd7Ax--ROIon6bRxtm9wfzLLLTR5wUYn5I18H6h7PTX-FQfo9o9WzdCPW8gbzRfJ8&usqp=CAU',
         'Steamed':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://i0.wp.com/hadipisir.com/wp-content/uploads/2021/03/00-4.jpg?fit=750%2C525&ssl=1',
         'Braised':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp8H9pDHj8gDYNVo8m5PLtZ0CGTBfwDYgllQeBHqwdBRGGhVW401IYrIK3bChdQyDBq10&usqp=CAU',
         'Poached':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL1T9sYDZl5m50pRhyuLHCui1SkcYIas0dzekgvTgltjTlvu43yiHUlJgQwRCB-vs2fMo&usqp=CAU',
         'Microwaved':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://id.sharp/sites/default/files/uploads/2021-08/shutterstock_74089945.jpg',
         'Slow-cooked':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://images.immediate.co.uk/production/volatile/sites/30/2022/01/slow-cooker-hero-95e693e.jpg?quality=90&resize=556,505',
         'Raw':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://cathe.com/wp-content/uploads/2017/11/shutterstock_400298848.jpg',
         'Smoked':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyMLtsfBWQSh0dH4Kdy89Ohi2twYe8TVEs5EKRpmylzy2B3gkVUzH23TORaKxIunkzNdg&usqp=CAU',
         'Blanched':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUe_Xvz8kkGkj24mjOIrVdkGHow65KOaRKQ9a_2sIExhWVpdrrAhstcyWyxmgXO6h1MgQ&usqp=CAU',
         'Broiled':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-kM_rdyYOUhbNLSN-4fOlUQTsq5LraDfPtSomuXjx4uh17VZyicg7HFtTKOPNxlbTTAg&usqp=CAU',
         'Pressure-cooked':
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoAAtkXa4K5leBdPDEmDuLl7JWyxD0l7prwGIlJ_chR6kmRDQAD7E56lk2Z5WdUn3rEVg&usqp=CAU',
       };
 
   @override
@@ -283,31 +281,40 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
     try {
       Query query = _cloudStoreClient.collection('recipes');
 
+      // Apply filters that can be done on Firestore
       if (params.mealTypes != null && params.mealTypes!.isNotEmpty) {
         query = query.where('mealTypes', arrayContainsAny: params.mealTypes);
       }
-      if (params.cuisineTypes != null && params.cuisineTypes!.isNotEmpty) {
-        query = query.where('cuisine', whereIn: params.cuisineTypes);
-      }
-      if (params.dishTypes != null && params.dishTypes!.isNotEmpty) {
-        query = query.where('dishType', whereIn: params.dishTypes);
-      }
-      if (params.preparationMethods != null &&
-          params.preparationMethods!.isNotEmpty) {
-        query = query.where('preparationMethod',
-            whereIn: params.preparationMethods);
-      }
-      if (params.spiceLevels != null && params.spiceLevels!.isNotEmpty) {
-        query = query.where('spiceLevel', whereIn: params.spiceLevels);
-      }
-      if (params.servingSizes != null && params.servingSizes!.isNotEmpty) {
-        query = query.where('servingSize', whereIn: params.servingSizes);
-      }
 
-      final recipeSnapshots = await query.get();
-      return recipeSnapshots.docs
-          .map((doc) => RecipeModel.fromMap(doc.data()! as DataMap))
+      // Fetch all recipes (we'll filter them in memory)
+      final querySnapshot = await query.get();
+      List<RecipeModel> recipes = querySnapshot.docs
+          .map((doc) => RecipeModel.fromMap(doc.data() as DataMap))
           .toList();
+
+      // Apply remaining filters in memory
+      recipes = recipes.where((recipe) {
+        if (params.cuisineTypes != null && params.cuisineTypes!.isNotEmpty) {
+          if (!params.cuisineTypes!.contains(recipe.cuisine)) return false;
+        }
+        if (params.dishTypes != null && params.dishTypes!.isNotEmpty) {
+          if (!params.dishTypes!.contains(recipe.dishType)) return false;
+        }
+        if (params.preparationMethods != null &&
+            params.preparationMethods!.isNotEmpty) {
+          if (!params.preparationMethods!.contains(recipe.preparationMethod))
+            return false;
+        }
+        if (params.spiceLevels != null && params.spiceLevels!.isNotEmpty) {
+          if (!params.spiceLevels!.contains(recipe.spiceLevel)) return false;
+        }
+        if (params.servingSizes != null && params.servingSizes!.isNotEmpty) {
+          if (!params.servingSizes!.contains(recipe.servingSize)) return false;
+        }
+        return true;
+      }).toList();
+
+      return recipes;
     } catch (e) {
       throw ServerException(message: e.toString(), statusCode: '500');
     }
@@ -369,11 +376,13 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   }
 
   @override
-  Future<void> toggleFavoriteRecipe(String userId, String recipeId) async {
+  Future<List<String>> toggleFavoriteRecipe(
+      String userId, String recipeId) async {
     try {
       final userRef = _cloudStoreClient.collection('users').doc(userId);
 
-      await _cloudStoreClient.runTransaction((transaction) async {
+      List<String> updatedFavorites =
+          await _cloudStoreClient.runTransaction((transaction) async {
         final userDoc = await transaction.get(userRef);
         if (!userDoc.exists) {
           throw const ServerException(
@@ -392,7 +401,10 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
         }
 
         transaction.update(userRef, {'favoriteRecipeIds': favorites});
+        return favorites;
       });
+
+      return updatedFavorites;
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
       throw ServerException(
@@ -427,9 +439,11 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   @override
   Future<void> addFeedback(FeedbackModel feedback) async {
     try {
-      await _cloudStoreClient.collection('feedback').add(feedback.toMap());
+      // Add feedback to the feedback collection
+      final feedbackRef =
+          await _cloudStoreClient.collection('feedback').add(feedback.toMap());
 
-      // Update the recipe's rating and rating count
+      // Update the recipe's rating, rating count, and add feedback to the recipe
       final recipeRef =
           _cloudStoreClient.collection('recipes').doc(feedback.recipeId);
       await _cloudStoreClient.runTransaction((transaction) async {
@@ -437,14 +451,23 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
         if (recipeDoc.exists) {
           final currentRating = recipeDoc.data()!['rating'] as double? ?? 0.0;
           final currentCount = recipeDoc.data()!['ratingCount'] as int? ?? 0;
+          final currentFeedback = List<Map<String, dynamic>>.from(
+              recipeDoc.data()!['feedback'] as List? ?? []);
 
           final newCount = currentCount + 1;
           final newRating =
               ((currentRating * currentCount) + feedback.rating) / newCount;
 
+          // Add new feedback to the list
+          currentFeedback.add({
+            ...feedback.toMap(),
+            'id': feedbackRef.id, // Use the ID from the feedback collection
+          });
+
           transaction.update(recipeRef, {
             'rating': newRating,
             'ratingCount': newCount,
+            'feedback': currentFeedback,
           });
         }
       });

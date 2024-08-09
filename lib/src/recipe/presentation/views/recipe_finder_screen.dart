@@ -3,7 +3,7 @@
 import 'package:afrosine/core/common/widgets/custom_form_builder_titled_image_picker.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
-import 'package:afrosine/src/recipe/presentation/views/recipe_details_screen.dart';
+import 'package:afrosine/src/recipe/presentation/views/recipe_overview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -239,7 +239,7 @@ class _RecipeFinderScreenState extends State<RecipeFinderScreen> {
                     Navigator.of(context).pop();
                     Navigator.pushNamed(
                       context,
-                      RecipeDetailsScreen.routeName,
+                      RecipeOverviewScreen.routeName,
                       arguments: recipes[index],
                     );
                   },

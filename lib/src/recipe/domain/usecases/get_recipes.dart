@@ -1,8 +1,10 @@
+import 'package:afrosine/core/errors/failures.dart';
 import 'package:afrosine/core/usecases/usecases.dart';
 import 'package:afrosine/core/utils/typedefs.dart';
 import 'package:afrosine/src/recipe/domain/entities/feedback.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/domain/repos/recipe_repo.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -31,17 +33,16 @@ class GenerateRecipes
 }
 
 class GenerateRecipesParams extends Equatable {
-  final List<XFile>? images;
-  final List<String> ingredients;
-  final List<String>? cuisines;
-  final List<String>? dietaryRestrictions;
-
   const GenerateRecipesParams({
     this.images,
     required this.ingredients,
     this.cuisines,
     this.dietaryRestrictions,
   });
+  final List<XFile>? images;
+  final List<String> ingredients;
+  final List<String>? cuisines;
+  final List<String>? dietaryRestrictions;
 
   @override
   List<Object?> get props =>
@@ -58,13 +59,16 @@ class GetRecipeById implements UseCaseWithParams<Recipe, String> {
 }
 
 class ToggleFavoriteRecipe
-    implements UseCaseWithParams<void, ToggleFavoriteRecipeParams> {
-  ToggleFavoriteRecipe(this._repository);
-  final RecipeRepository _repository;
+    implements UseCaseWithParams<List<String>, ToggleFavoriteRecipeParams> {
+  final RecipeRepository repository;
+
+  ToggleFavoriteRecipe(this.repository);
 
   @override
-  ResultFuture<void> call(ToggleFavoriteRecipeParams params) {
-    return _repository.toggleFavoriteRecipe(params.userId, params.recipeId);
+  Future<Either<Failure, List<String>>> call(
+      ToggleFavoriteRecipeParams params) async {
+    return await repository.toggleFavoriteRecipe(
+        params.userId, params.recipeId);
   }
 }
 
@@ -119,21 +123,22 @@ class FilterRecipes implements UseCaseWithParams<List<Recipe>, FilterParams> {
       repository.filterRecipes(params);
 }
 
-class FilterParams {
-  FilterParams({
+class FilterParams extends Equatable {
+  final List<String>? mealTypes;
+  final List<String>? dishTypes;
+  final List<String>? preparationMethods;
+  final List<String>? cuisineTypes;
+  final List<String>? spiceLevels;
+  final List<String>? servingSizes;
+
+  const FilterParams({
     this.mealTypes,
-    this.cuisineTypes,
     this.dishTypes,
     this.preparationMethods,
+    this.cuisineTypes,
     this.spiceLevels,
     this.servingSizes,
   });
-  final List<String>? mealTypes;
-  final List<String>? cuisineTypes;
-  final List<String>? dishTypes;
-  final List<String>? preparationMethods;
-  final List<String>? spiceLevels;
-  final List<String>? servingSizes;
 
   bool get isEmpty =>
       mealTypes == null &&
@@ -160,6 +165,16 @@ class FilterParams {
       'servingSizes': servingSizes,
     };
   }
+
+  @override
+  List<Object?> get props => [
+        mealTypes,
+        dishTypes,
+        preparationMethods,
+        cuisineTypes,
+        spiceLevels,
+        servingSizes
+      ];
 }
 
 // class FilterRecipesUsecase implements UseCase<List<Recipe>, FilterParams> {

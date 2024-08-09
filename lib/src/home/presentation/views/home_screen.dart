@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildRecipeGrid() {
     return BlocBuilder<RecipeBloc, RecipeState>(
       builder: (context, state) {
-        if (state is RecipesLoaded) {
+        if (state is RecipesLoaded && state.recipes.isNotEmpty) {
           return GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -173,6 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
               return RecipeCard(recipe: state.recipes[index]);
             },
           );
+        } else if (state is RecipesLoaded && state.recipes.isEmpty) {
+          return const Center(child: Text('No Recipes Found'));
         } else if (state is RecipeError) {
           return Center(child: Text(state.message));
         }

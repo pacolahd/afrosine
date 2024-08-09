@@ -21,7 +21,7 @@ abstract class RecipeRepository {
 
   ResultFuture<List<Recipe>> getRecipes();
   ResultFuture<Recipe> getRecipeById(String id);
-  ResultFuture<void> toggleFavoriteRecipe(
+  ResultFuture<List<String>> toggleFavoriteRecipe(
     String userId,
     String recipeId,
   );

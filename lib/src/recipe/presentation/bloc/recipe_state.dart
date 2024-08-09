@@ -65,6 +65,9 @@ class RecipeError extends RecipeState {
 
 class FeedbackAdded extends RecipeState {
   const FeedbackAdded();
+
+  @override
+  List<Object> get props => [];
 }
 
 class RecipeFeedbackLoaded extends RecipeState {

@@ -75,11 +75,12 @@ class RecipeRepoImpl implements RecipeRepository {
   }
 
   @override
-  ResultFuture<void> toggleFavoriteRecipe(
+  Future<Either<Failure, List<String>>> toggleFavoriteRecipe(
       String userId, String recipeId) async {
     try {
-      await _remoteDataSource.toggleFavoriteRecipe(userId, recipeId);
-      return const Right(null);
+      final updatedFavorites =
+          await _remoteDataSource.toggleFavoriteRecipe(userId, recipeId);
+      return Right(updatedFavorites);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     }

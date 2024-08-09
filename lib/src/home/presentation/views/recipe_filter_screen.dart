@@ -1,4 +1,5 @@
 import 'package:afrosine/core/resources/theme/app_colors.dart';
+import 'package:afrosine/core/utils/constants.dart';
 import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
 import 'package:afrosine/src/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:flutter/material.dart';
@@ -11,17 +12,12 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   final Map<String, List<String>> _filters = {
-    'Dish type': ['Stews and soups', 'Curries', 'Stir-fries'],
-    'Preparation method': ['Grilled', 'Fried', 'Roasted'],
-    'Cuisine type': [
-      'West African',
-      'East African',
-      'Central African',
-      'South African',
-      'North African'
-    ],
-    'Spice level': ['Mild', 'Medium', 'Spicy', 'Very spicy'],
-    'Serving size': ['Single-serving', 'Family size', 'Party size'],
+    'Dish type': RecipeConstants.dishTypes,
+    'Preparation method': RecipeConstants.preparationMethods,
+    'Cuisine type': RecipeConstants.cuisineTypes,
+    'Spice level': RecipeConstants.spiceLevels,
+    'Serving size': RecipeConstants.servingSizes,
+    'Meal Types': RecipeConstants.mealTypes,
   };
 
   late Map<String, List<String>> _selectedFilters;
@@ -29,7 +25,14 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedFilters = Map.from(context.read<RecipeBloc>().currentFilters);
+    final currentFilters = context.read<RecipeBloc>().currentFilters;
+    _selectedFilters = {
+      'Dish type': currentFilters?.dishTypes ?? [],
+      'Preparation method': currentFilters?.preparationMethods ?? [],
+      'Cuisine type': currentFilters?.cuisineTypes ?? [],
+      'Spice level': currentFilters?.spiceLevels ?? [],
+      'Serving size': currentFilters?.servingSizes ?? [],
+    };
   }
 
   @override
@@ -59,6 +62,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 child: const Text('Done'),
                 onPressed: () {
                   final params = FilterParams(
+                    mealTypes: _selectedFilters['Meal Types'],
                     dishTypes: _selectedFilters['Dish type'],
                     preparationMethods: _selectedFilters['Preparation method'],
                     cuisineTypes: _selectedFilters['Cuisine type'],

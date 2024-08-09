@@ -1,3 +1,5 @@
+import 'package:afrosine/core/common/app/providers/user_provider.dart';
+import 'package:afrosine/src/recipe/data/models/feedback_model.dart';
 import 'package:afrosine/src/recipe/domain/entities/feedback.dart';
 import 'package:afrosine/src/recipe/domain/entities/recipe.dart';
 import 'package:afrosine/src/recipe/domain/usecases/get_recipes.dart';
@@ -9,7 +11,7 @@ part 'recipe_event.dart';
 part 'recipe_state.dart';
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
-  final Map<String, List<String>> currentFilters = {};
+  FilterParams? currentFilters;
   RecipeBloc({
     required GetRecipes getRecipes,
     required GetRecipeById getRecipeById,
@@ -120,19 +122,25 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     Emitter<RecipeState> emit,
   ) async {
     try {
-      await _toggleFavoriteRecipe(
+      final userProvider = event.userProvider;
+      final currentUser = userProvider.user;
+      if (currentUser == null) {
+        emit(RecipeError(message: 'User not found'));
+        return;
+      }
+
+      final result = await _toggleFavoriteRecipe(
         ToggleFavoriteRecipeParams(
-          userId: event.userId,
+          userId: currentUser.uid,
           recipeId: event.recipeId,
         ),
       );
 
-      // Get the updated list of favorite recipe IDs
-      final result = await _getFavoriteRecipeIds(event.userId);
       result.fold(
         (failure) => emit(RecipeError(message: failure.message)),
-        (favoriteIds) {
-          emit(FavoriteRecipesLoaded(favoriteRecipeIds: favoriteIds));
+        (updatedFavorites) {
+          userProvider.updateFavorites(updatedFavorites);
+          emit(FavoriteRecipesLoaded(favoriteRecipeIds: updatedFavorites));
           emit(FavoriteToggled());
         },
       );
@@ -180,10 +188,11 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     AddFeedbackEvent event,
     Emitter<RecipeState> emit,
   ) async {
+    emit(RecipeLoading());
     final result = await _addFeedback(event.feedback);
     result.fold(
       (failure) => emit(RecipeError(message: failure.message)),
-      (_) => emit(const FeedbackAdded()),
+      (_) => emit(FeedbackAdded()),
     );
   }
 
@@ -215,17 +224,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     Emitter<RecipeState> emit,
   ) async {
     emit(RecipeLoading());
-    currentFilters.clear();
-    if (event.params.dishTypes != null)
-      currentFilters['Dish type'] = event.params.dishTypes!;
-    if (event.params.preparationMethods != null)
-      currentFilters['Preparation method'] = event.params.preparationMethods!;
-    if (event.params.cuisineTypes != null)
-      currentFilters['Cuisine type'] = event.params.cuisineTypes!;
-    if (event.params.spiceLevels != null)
-      currentFilters['Spice level'] = event.params.spiceLevels!;
-    if (event.params.servingSizes != null)
-      currentFilters['Serving size'] = event.params.servingSizes!;
+    currentFilters = event.params;
 
     final result = await _filterRecipes(event.params);
     result.fold(

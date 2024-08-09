@@ -20,16 +20,16 @@ class GetRecipeByIdEvent extends RecipeEvent {
 }
 
 class ToggleFavoriteRecipeEvent extends RecipeEvent {
+  final String recipeId;
+  final UserProvider userProvider;
+
   const ToggleFavoriteRecipeEvent({
-    required this.userId,
     required this.recipeId,
+    required this.userProvider,
   });
 
-  final String userId;
-  final String recipeId;
-
   @override
-  List<Object> get props => [userId, recipeId];
+  List<Object> get props => [recipeId, userProvider];
 }
 
 class GetFavoriteRecipeIdsEvent extends RecipeEvent {
@@ -50,9 +50,9 @@ class GetFavoriteRecipesEvent extends RecipeEvent {
 }
 
 class AddFeedbackEvent extends RecipeEvent {
-  const AddFeedbackEvent(this.feedback);
+  final FeedbackModel feedback;
 
-  final Feedback feedback;
+  const AddFeedbackEvent(this.feedback);
 
   @override
   List<Object> get props => [feedback];

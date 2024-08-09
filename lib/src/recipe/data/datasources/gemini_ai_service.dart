@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:afrosine/core/utils/constants.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -117,35 +118,37 @@ class GeminiAIService {
 
     The recipes should be African dishes. Optionally include palm oil, Maggi, salt, or corn flour if they fit the recipes.
 
-    Ensure each recipe belongs to one of these categories:
-    - Dish Type: Stews and Soups, Curries, Stir-fries, Salads, Grilled Dishes, Fried Dishes, Baked Dishes, Roasted Dishes, Braised Dishes, Boiled Dishes, Sautéed Dishes, Desserts, Sandwiches, Pasta Dishes, Rice Dishes, Casseroles, Seafood Dishes, Appetizers, Beverages, Breakfast Dishes, Bread and Pastries, Vegetarian Dishes, Vegan Dishes.
-    - Preparation Method: Grilled, Fried, Baked, Roasted, Boiled, Sautéed, Steamed, Braised, Poached, Microwaved, Slow-cooked, Raw, Smoked, Blanched, Broiled, Pressure-cooked.
-    - Spice Level: Mild, Medium, Spicy, Very Spicy, Extra Spicy.
-    - Serving Size: Single-serving, Double-serving, Family size (serves 4), Party size (serves 6+).
+    Ensure each recipe belongs to these categories:
+    - Dish Type: ${RecipeConstants.dishTypes.join(', ')}
+    - Preparation Method: ${RecipeConstants.preparationMethods.join(', ')}
+    - Cuisine Type: ${RecipeConstants.cuisineTypes.join(', ')}
+    - Spice Level: ${RecipeConstants.spiceLevels.join(', ')}
+    - Serving Size: ${RecipeConstants.servingSizes.join(', ')}
+    - Meal Types: ${RecipeConstants.mealTypes.join(', ')}
 
     Return the result as a JSON array containing 3 recipe objects with these keys (all fields are required):
     [
       {
-        "recipe_title": "Name of the dish",
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg",
+        "name": "Name of the dish",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg",
         "description": "Brief overview of the dish",
-        "cuisine_type": "Regional cuisine category (e.g., West African, East African, Central African)",
-        "dish_type": "Type of dish (e.g., Stews and Soups, Curries, Stir-fries)",
-        "preparation_method": "How the dish is prepared (e.g., Grilled, Fried, Roasted)",
-        "spice_level": "Spiciness of the dish (e.g., Mild, Very Spicy)",
-        "serving_size": "How many people the recipe serves (e.g., Single-serving, Family size, Party size)",
-        "meal_types": ["Categorize the recipe as Breakfast, Lunch, or Dinner"],
+        "cuisine": "One of the cuisine types listed above",
+        "dishType": "One of the dish types listed above",
+        "preparationMethod": "One of the preparation methods listed above",
+        "spiceLevel": "One of the spice levels listed above",
+        "servingSize": "One of the serving sizes listed above",
+        "mealTypes": ["One or more of the meal types listed above"],
         "ingredients": [
           {"name": "Ingredient name", "quantity": "Amount", "unit": "Measurement unit"}
         ],
         "instructions": ["Step 1", "Step 2", "Step 3"],
-        "serving_suggestions": "How the dish is typically served",
-        "nutritional_content": "The nutritional content per serving"
+        "servingSuggestions": "How the dish is typically served",
+        "nutritionalContent": "The nutritional content per serving"
       },
       // ... two more recipe objects
     ]
 
-    Ensure all fields are filled with appropriate values, using placeholder text if necessary.
+    Ensure all fields are filled with appropriate values, using only the options provided in the lists above.
     ''';
 
     return basePrompt;
@@ -154,38 +157,41 @@ class GeminiAIService {
   // String _buildPrompt(List<String> ingredients, List<String>? cuisines,
   //     List<String>? dietaryRestrictions) {
   //   final basePrompt = '''
-  //   Analyze the provided ingredients and recommend an African recipe. Ensure it only contains real, edible ingredients and adheres to food safety practices.
+  //   Analyze the provided ingredients and recommend 3 different African recipes. Ensure they only contain real, edible ingredients and adhere to food safety practices.
   //
   //   Ingredients: ${ingredients.join(', ')}
   //   ${cuisines != null && cuisines.isNotEmpty ? 'Cuisines: ${cuisines.join(', ')}' : ''}
   //   ${dietaryRestrictions != null && dietaryRestrictions.isNotEmpty ? 'Dietary Restrictions: ${dietaryRestrictions.join(', ')}' : ''}
   //
-  //   The recipe should be an African dish. Optionally include palm oil, Maggi, salt, or corn flour if they fit the recipe.
+  //   The recipes should be African dishes. Optionally include palm oil, Maggi, salt, or corn flour if they fit the recipes.
   //
-  //   Ensure the recipe belongs to one of these categories:
+  //   Ensure each recipe belongs to one of these categories:
   //   - Dish Type: Stews and Soups, Curries, Stir-fries, Salads, Grilled Dishes, Fried Dishes, Baked Dishes, Roasted Dishes, Braised Dishes, Boiled Dishes, Sautéed Dishes, Desserts, Sandwiches, Pasta Dishes, Rice Dishes, Casseroles, Seafood Dishes, Appetizers, Beverages, Breakfast Dishes, Bread and Pastries, Vegetarian Dishes, Vegan Dishes.
   //   - Preparation Method: Grilled, Fried, Baked, Roasted, Boiled, Sautéed, Steamed, Braised, Poached, Microwaved, Slow-cooked, Raw, Smoked, Blanched, Broiled, Pressure-cooked.
   //   - Spice Level: Mild, Medium, Spicy, Very Spicy, Extra Spicy.
   //   - Serving Size: Single-serving, Double-serving, Family size (serves 4), Party size (serves 6+).
   //
-  //   Return the result in JSON format with these keys (all fields are required):
-  //   {
-  //     "recipe_title": "Name of the dish",
-  //     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg",
-  //     "description": "Brief overview of the dish",
-  //     "cuisine_type": "Regional cuisine category (e.g., West African, East African, Central African)",
-  //     "dish_type": "Type of dish (e.g., Stews and Soups, Curries, Stir-fries)",
-  //     "preparation_method": "How the dish is prepared (e.g., Grilled, Fried, Roasted)",
-  //     "spice_level": "Spiciness of the dish (e.g., Mild, Very Spicy)",
-  //     "serving_size": "How many people the recipe serves (e.g., Single-serving, Family size, Party size)",
-  //     "meal_types": ["Categorize the recipe as Breakfast, Lunch, or Dinner"],
-  //     "ingredients": [
-  //       {"name": "Ingredient name", "quantity": "Amount", "unit": "Measurement unit"}
-  //     ],
-  //     "instructions": ["Step 1", "Step 2", "Step 3"],
-  //     "serving_suggestions": "How the dish is typically served",
-  //     "nutritional_content": "The nutritional content per serving"
-  //   }
+  //   Return the result as a JSON array containing 3 recipe objects with these keys (all fields are required):
+  //   [
+  //     {
+  //       "name": "Name of the dish",
+  //       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/African_Dishes.jpg/750px-African_Dishes.jpg",
+  //       "description": "Brief overview of the dish",
+  //       "cuisine": "Regional cuisine category (e.g., West African, East African, Central African)",
+  //       "dishType": "Type of dish (e.g., Stews and Soups, Curries, Stir-fries)",
+  //       "preparationMethod": "How the dish is prepared (e.g., Grilled, Fried, Roasted)",
+  //       "spiceLevel": "Spiciness of the dish (e.g., Mild, Very Spicy)",
+  //       "servingSize": "How many people the recipe serves (e.g., Single-serving, Family size, Party size)",
+  //       "mealTypes": ["Categorize the recipe as Breakfast, Lunch, or Dinner"],
+  //       "ingredients": [
+  //         {"name": "Ingredient name", "quantity": "Amount", "unit": "Measurement unit"}
+  //       ],
+  //       "instructions": ["Step 1", "Step 2", "Step 3"],
+  //       "servingSuggestions": "How the dish is typically served",
+  //       "nutritionalContent": "The nutritional content per serving"
+  //     },
+  //     // ... two more recipe objects
+  //   ]
   //
   //   Ensure all fields are filled with appropriate values, using placeholder text if necessary.
   //   ''';
